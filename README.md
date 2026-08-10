@@ -30,8 +30,9 @@ sudo apt-get install git && sudo apt-get install python3 && sudo apt-get install
 if you have multiple keyboards (like russian, chinese, japanese, arabic...) it should add itself automatically to that as long as all your keyboards are on ibus
 
 # to do list
- * writing "test?" will only show "test" but still output "test? " if you press space
- * fix the enter not working on some text editors
+ * writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space
+ * writing a word and then "." like "absltly." will cause a lag spike
+ * fix 'enter' not working on ubuntu text editor
  * make it such that pressing caps makes the text in all caps (while accounting for the shortn algorithm) instead of needing to click left shift twice.
  * add frequency sorting for results
  * add customizable settings
