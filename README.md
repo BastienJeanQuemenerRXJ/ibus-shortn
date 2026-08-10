@@ -30,13 +30,15 @@ sudo apt-get install git && sudo apt-get install python3 && sudo apt-get install
 if you have multiple keyboards (like russian, chinese, japanese, arabic...) it should add itself automatically to that as long as all your keyboards are on ibus
 
 # to do list
+ * add english-dicmaker.py 
  * writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space
  * writing a word and then "." like "absltly." will cause a lag spike
  * fix 'enter' not working on ubuntu text editor
  * make it such that pressing caps makes the text in all caps (while accounting for the shortn algorithm) instead of needing to click left shift twice.
  * add frequency sorting for results
  * add customizable settings
- * add support for french
+ * add support for non ISO basic Latin alphabet languages (russian, french, german)->the issue is that 
  * add support for russian
  * add support for more languages
+
 
