@@ -10,7 +10,7 @@ vs
 
 
 # Commands
-* pressing 'esc' disables the engine, thereby letting you type normally. repressing it enables it again. keep in mind that pressing 'esc' does not unload the dictionary.
+* pressing 'esc' disables the engine, thereby letting you type normally. repressing it enables it again. keep in mind that pressing 'esc' does not actually unload anything, the engine and dictionary are still running and active. in case of a bug, do ```pkill ibus``` which will disable all ibus IMEs but keep you with non-IME IBus keyboards (russian, french, english, etc). 
 * pressing left shift once will capitalize the first letter of your word. clicking it again makes it all caps. clicking it again reverts to lower case. this is a workaround but it works for now. it is planned to allow you to hold shift to be able to capitalize only the first letter of your word. and to have caps lock work too.
 * pressing ',.;: before validating your word will add it before your word and then add a space.  ie,  typing "humnty,1" will give "humanity, "
   
