@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="inputmethod">
+  <id>shortn.xml</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Shortn</name>
+  <name xml:lang="pt_BR">Shortn</name>
+  <name xml:lang="en_US">Shortn</name>
+  <name xml:lang="zh_TW">Shortn</name>
+  <summary>Shortn input method</summary>
+  <summary xml:lang="pt_BR">Metodo de entrada Shortn</summary>
+  <summary xml:lang="en_US">Shortn</summary>
+  <summary xml:lang="zh_TW">Shortn</summary>
+  <description>
+    <p>test.</p>
+    <p xml:lang="en_US">uh</p>
+    <p xml:lang="en_US">testing</p>
+
+  </description>
+  <url type="homepage">https://shortn-scheme.github.io/projects/ibus-shortn/</url>
+  <update_contact>shortn@bastien.live</update_contact>
+</component>

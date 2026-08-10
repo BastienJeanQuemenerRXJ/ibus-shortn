@@ -1,0 +1,11 @@
+Package: ibus-shortn
+Version: 7.0
+Architecture: all
+Maintainer: Bastien Jean <shortn@bastien.live>
+Original-Maintainer: Bastien Jean <shortn@bastien.live>
+Installed-Size: 119
+Depends: gir1.2-ibus-1.0, ibus (>= 1.4.1), python3-gi, dconf-gsettings-backend | gsettings-backend, python3:any
+Section: utils
+Priority: optional
+Homepage: https://shortn.bastien.live
+Description: Shortn input method for IBus. Maintained by Bastien. Still in beta testing. Support is streamlined from Debian first because that's my distro. Forked from ibus-cangjie by using its structure for compability and build.

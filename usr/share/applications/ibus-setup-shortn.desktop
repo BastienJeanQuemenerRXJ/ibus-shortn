@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+# The title of the preferences window for Shortn
+Name=Shortn Preferences
+# Tooltip for the preferences app for Shortn
+Comment=Set preferences for the Shortn input method
+
+Exec=/usr/bin/ibus-setup-shortn shortn
+Icon=ibus-setup-shortn
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Settings;
+NotShowIn=GNOME;

@@ -1,0 +1,46 @@
+#!/usr/bin/python3
+#
+# Copyright (c)  - The IBus Shortn authors, forked from IBus Cangjie
+#
+# This file is part of ibus-shortn, the IBus Shortn input method engine.
+#
+# ibus-shortn is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# ibus-shortn is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ibus-shortn.  If not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import locale
+
+import gi
+gi.require_version('IBus','1.0')
+
+from gi.repository import IBus
+
+from ibus_shortn import IMApp
+
+
+componentdir = "/usr/share/ibus/component"
+
+try:
+    locale.setlocale(locale.LC_ALL, "")
+except:
+    pass
+
+parser = argparse.ArgumentParser(description="Shortn input method engine")
+parser.add_argument("--ibus", "-i", action="store_true",
+                    help="let the engine know it is executed by IBus")
+parser.add_argument("engine", choices=("shortn", "shortnfr"),
+                    help="Input method engine to use")
+args = parser.parse_args()
+
+IBus.init()
+IMApp(args.ibus, args.engine, componentdir).run()
