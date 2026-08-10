@@ -22,7 +22,9 @@ test
 
 
 # installing
-*debian: sudo apt-get install git && sudo apt-get install python3 && sudo apt-get install ibus && sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/ && cd .. && dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i  ibus-shortn.deb && ibus restart
+* debian: 
+sudo apt-get install git && sudo apt-get install python3 && sudo apt-get install ibus && sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/ && cd .. && dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i  ibus-shortn.deb && ibus restart
+if you have multiple keyboards (like russian, chinese, japanese, arabic...) it should add itself automatically to that as long as all your keyboards are on ibus
 
 # to do list
  * writing "test?" will only show "test" but still output "test? " if you press space
@@ -33,7 +35,4 @@ test
  * add support for french
  * add support for russian
  * add support for more languages
-<<<<<<< HEAD
 
-=======
->>>>>>> e6760570f5775b111c6c3b2a5d79b0287744107c
