@@ -25,10 +25,10 @@ Dependencies :
 ```python3, git, ibus```
 
 * debian: 
+
 ```sudo apt-get install ibus && sudo apt-get install python3 && sudo apt-get install git```
 
-```sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/ && cd .. && dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i ibus-shortn.deb && ibus restart
-```
+```sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/ && cd .. && dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i ibus-shortn.deb && ibus restart```
 
 
 Setting up:
