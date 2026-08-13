@@ -18,7 +18,8 @@ vs
 
 But let me show you that on camera: 
 
-https://github.com/BastienJeanQuemenerRXJ/ibus-shortn/blob/31ef61408248ab4ba2c8f1c14bb9dac58804b14e/demonstration.webm
+https://github.com/user-attachments/assets/5cb5d9a3-1a4b-436a-872a-9d42e0e7538d
+(demonstration.mp4)
 
 # installing
 * debian: 
