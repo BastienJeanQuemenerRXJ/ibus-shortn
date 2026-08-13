@@ -40,7 +40,7 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 
 # to do list
- * make a usable caps case system. -> remove toggletime. make it such that shortn detects whether caps lock is enabled or not. automatic input conversion scheme to lower case (A->a, B->b). when word is committed with caps lock enabled, make the word committed in (conversion) caps. as for capitalizing only the first letter, add a variable that checks if the first letter of the word was typed in caps.
+ * make a usable caps case system. -> add a detector for caps lock.     remove toggletime. make it such that shortn detects whether caps lock is enabled or not. automatic input conversion scheme to lower case (A->a, B->b). when word is committed with caps lock enabled, make the word committed in (conversion) caps. as for capitalizing only the first letter, add a variable that checks if the first letter of the word was typed in caps.
 
  * writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space
  * fix 'enter' not working on ubuntu text editor
