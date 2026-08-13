@@ -1,11 +1,12 @@
 import time
 
+#this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
         the="shortnengine failed because of"+getattr(the, 'message', repr(the))
     the=str(the)
-    with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
+    with open('shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
 
 
@@ -64,7 +65,7 @@ class Engine(IBus.Engine):
                 return json.load(dic)
         except Exception as err:
             errc= getattr(err, 'message', repr(err))
-            logwrite("dicloading failed because of"+errc)
+            #logwrite("dicloading failed because of"+errc)
             return {"json":["failed"]}
     #commits inp (string) as final output. if ibusencode==False then it assumes inp is already converted into ibus encode. if you want to deconvert something from ibus encode to text, then you can do inp.text
     #it is necessary for what is being committed to be in ibus encode in the end
@@ -326,7 +327,7 @@ class EngineShortn(Engine):
             return False
         if inputchar in self.englishpunctuation:
             self.addpunc=inputchar
-            logwrite(self.current_input)
+            #logwrite(self.current_input)
             if self.current_input==None or self.current_input=="":
                 self.commit(self.addpunc+" ")
                 time.sleep(0.1)
