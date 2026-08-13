@@ -18,8 +18,11 @@ vs
 
 But let me show you that on camera: 
 
-https://github.com/user-attachments/assets/5cb5d9a3-1a4b-436a-872a-9d42e0e7538d
-(demonstration.mp4)
+
+
+https://github.com/user-attachments/assets/6dd0051c-056c-4096-b4c7-c2123ab6a111
+
+
 
 # installing
 * debian: 
