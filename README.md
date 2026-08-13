@@ -18,8 +18,7 @@ vs
 
 But let me show you that on camera: 
 
-test
-
+https://github.com/BastienJeanQuemenerRXJ/ibus-shortn/blob/31ef61408248ab4ba2c8f1c14bb9dac58804b14e/demonstration.webm
 
 # installing
 * debian: 
@@ -38,5 +37,6 @@ if you have multiple keyboards (like russian, chinese, japanese, arabic...) it s
  * add frequency sorting for results
  * add customizable settings
  * add support for non ISO basic Latin alphabet languages (russian, french, german)->the issue is that non iso basic latin characters take way more place (for example a russian shortn dictionary takes 40mb while the english one takes 8mb. this is because the code for basic latin letters are short (latin 'a' in hex is '41', whereas cyrillic "а" is '0xD0 0xB0' which enhances necessary storage for cyrillic words. the idea is that non basic latin characters will be converted into latin as output and input. IE, Russian types "алфвт", IME converts it into alfvt, IME then searches alfvt into the russian dictionary, finds "alfvt->alfavit", then at the end converts alfavit into алфавит. since cyrillic has more letters than latin, and the conversion needs to be injective (1 to 1), case (a->A) can be used since it's not used in dictionaries (no difference between Алфавит and алфавит in the dictionary since case is inputted by the user). so the conversion scheme will look like "а <=> a", "б <=> b", "я <=> A", "в <=> v", "ю <=> U", "ъ <=> x", "ь <=> X" etc
+
 
 
