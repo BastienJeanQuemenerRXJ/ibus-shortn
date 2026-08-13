@@ -6,12 +6,11 @@ def logwrite(the, e=0):
     if e==1:
         the="shortnengine failed because of"+getattr(the, 'message', repr(the))
     the=str(the)
-    with open('shortndebug.txt', 'a', encoding='utf-8') as f:
+    with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
 
 
 import time
-overflow=time.time()
     
 
 
@@ -201,14 +200,11 @@ class EngineShortn(Engine):
     __gtype_name__ = "EngineShortn"
     __name__ = "shortn"
     vowels={'a', 'e', 'i', 'o', 'u', 'y'}
-    englishlistfilter01={"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f","g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", "'", ":" }
+    englishlistfilter01={"a", "A", "b", "B", "c", "C", "d", "D", "e", "E", "f", "F", "g", "G", "h", "H", "i", "I", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "o", "O","p", "P", "q", "Q", "r", "R", "s", "S", "t", "T","u", "U", "v", "V", "w", "W", "x", "X", "y", "Y", "z", "Z", "'"}
     englishpunctuation={"?", "!", ".", ";", ","}
     capital ={ "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " "}
+    nocaplist = {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " "}
     addpunc=None
-    toggleshifton=True
-    toggletime=time.time()
-    allcaps=0
-    #0 means lower case, 1 means all caps, 2 means only first is capitalized
     
 
     def firstcap(self,the):
@@ -219,13 +215,15 @@ class EngineShortn(Engine):
         for i in the:
             a+=self.capital.get(i)
         return a
-    def capfunction(self, the):
-        if self.allcaps==1:
-            return self.allcap(the)
-        elif self.allcaps==2:
-            return self.firstcap(the)
-        else:
-            return the
+    def nocap(self, the):
+        a=""
+        for i in the:
+            try:
+                a+=self.nocaplist.get(i)
+            except:
+                a+=i
+        return a
+
     def do_number(self, keyval):
         if self.lookuptable.get_number_of_candidates():
             return self.do_select_candidate(int(IBus.keyval_to_unicode(keyval)))
@@ -267,7 +265,7 @@ class EngineShortn(Engine):
                 return b
         else:
             return sug
-
+    escapetoggle=True
     def do_process_key_event(self, keyval, keycode, state):
         if keyval==IBus.KEY_Return:
             self.forward_key_event(keyval, keycode, state)
@@ -277,31 +275,18 @@ class EngineShortn(Engine):
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
             # Ignore Alt+<key> and Ctrl+<key>
             return False
+        elif keyval==IBus.Escape:
+            self.escapetoggle=self.escapetoggle==False
+            self.addpunc=None
+            self.cleareverything()
         return self.do_inputchar(keyval)
 
     def do_inputchar(self, inputchar):
-        if inputchar == IBus.Escape:
-            self.toggleshifton=self.toggleshifton==False
-            self.toggletime=time.time()
-            if not self.toggleshifton:
-                self.commit(self.current_input)
-            self.addpunc=None
-            self.allcaps=0
-            self.cleareverything()
-        elif self.toggleshifton==False:
+        if not self.escapetoggle:
             return False
-        #why does it revert back to 0 when you switch focus
-        #we should get rid of leeway toggle time variables and use something more robust. i reuse toggletime here because the two (with left shift) will never conflict and the less active variables the better
-        if inputchar==IBus.KEY_Shift_L and time.time()-self.toggletime>0.1:
-            if self.allcaps==0:
-                self.allcaps=2
-            elif self.allcaps==2:
-                self.allcaps=1
-            elif self.allcaps==1:
-                self.allcaps=0
-            self.toggletime=time.time()
-        elif inputchar == IBus.space:
-            rtr=self.capfunction(self.current_input)
+            
+        if inputchar == IBus.space:
+            rtr=self.current_input
             if self.addpunc!=None:
                 rtr+=self.addpunc
                 self.addpunc=None
@@ -335,11 +320,11 @@ class EngineShortn(Engine):
                 self.addpunc=None
                 return True
         else:
-            self.update_current_input(append=inputchar)
+            self.update_current_input(append=self.nocap(inputchar))
+        logwrite(self.nocap(inputchar))
         ut=self.shortnenginefunction(self.current_input)    
         if ut!=None and type(ut)==list and type(ut)!=None:
-            self.setcand(thelist=ut, trailing=self.addpunc, additionalfunc=self.capfunction)
+            self.setcand(thelist=ut, trailing=self.addpunc)
         return True
-
 
         
