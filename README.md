@@ -40,9 +40,9 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 
 # to do list
+ * there is a problem with the caps system, caps needs to be pressed twice for it to have an effect instead of just once
  * despaghettify the code. remove unnecessary things. make punctuation system at the end of the process to fix the "writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space" interface issue (make it only show "mcknight" and typing say "truth?" will only show "truth" 
  * automatic capitalization when a "." dot is entered
- * there is a problem with the caps system, caps needs to be pressed twice for it to have an effect instead of just once->apparently this only happens when using a terminal 
  * fix 'enter' not working on ubuntu text editor
  * add english-dicmaker.py 
  * add frequency sorting for results
