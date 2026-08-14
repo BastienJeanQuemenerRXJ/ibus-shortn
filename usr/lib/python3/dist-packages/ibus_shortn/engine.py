@@ -1,3 +1,4 @@
+__all__ = ["EngineShortn"]
 import time
 
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
@@ -10,19 +11,10 @@ def logwrite(the, e=0):
         f.writelines(the)
 
 
-import time
-    
-
-
-__all__ = ["EngineShortn"]
-
-
 import gettext
 from operator import attrgetter
-
 import gi
 gi.require_version('IBus','1.0')
-
 from gi.repository import Gio
 from gi.repository import IBus
 
@@ -206,15 +198,6 @@ class EngineShortn(Engine):
     nocaplist = {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " "}
     addpunc=None
     
-
-    def firstcap(self,the):
-        return self.capital.get(the[:1])+the[1:]
-        
-    def allcap(self,the):
-        a=""
-        for i in the:
-            a+=self.capital.get(i)
-        return a
     def nocap(self, the):
         a=""
         for i in the:
@@ -223,6 +206,20 @@ class EngineShortn(Engine):
             except:
                 a+=i
         return a
+    def firstcap(self,the):
+        the=self.nocap(the)
+        try:
+            a= str(self.capital.get(the[:1]))+str(the[1:])
+        except:
+            a=the
+        return a
+        
+    def allcap(self,the):
+        a=""
+        for i in the:
+            a+=self.capital.get(i)
+        return a
+
 
     def do_number(self, keyval):
         if self.lookuptable.get_number_of_candidates():
@@ -231,7 +228,13 @@ class EngineShortn(Engine):
         page_index = self.lookuptable.get_cursor_pos()
         selected = self.lookuptable.get_candidate(page_index+index-1)
         if selected!=None:
-            self.commit(selected.text+" ")
+            b=selected.text
+            if self.capstoggle:
+                try: 
+                    b=self.firstcap(b)
+                except Exception as p:
+                    logwrite(p,e=1)
+            self.commit(b+" ")
         self.addpunc=None
         self.cleareverything()
         return True
@@ -266,10 +269,13 @@ class EngineShortn(Engine):
         else:
             return sug
     escapetoggle=True
+    capstoggle=False
     def do_process_key_event(self, keyval, keycode, state):
+        if (state & IBus.ModifierType.LOCK_MASK):
+            self.capstoggle=self.capstoggle==False
         if keyval==IBus.KEY_Return:
             self.forward_key_event(keyval, keycode, state)
-            return True    
+            return True
         elif (state & IBus.ModifierType.RELEASE_MASK):
             return False
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
@@ -284,9 +290,10 @@ class EngineShortn(Engine):
     def do_inputchar(self, inputchar):
         if not self.escapetoggle:
             return False
-            
         if inputchar == IBus.space:
             rtr=self.current_input
+            if self.capstoggle:
+                rtr=self.firstcap(rtr)
             if self.addpunc!=None:
                 rtr+=self.addpunc
                 self.addpunc=None
@@ -308,11 +315,14 @@ class EngineShortn(Engine):
         elif is_inputnumber(inputchar):
             return self.do_number(inputchar)
         inputchar = IBus.keyval_to_unicode(inputchar)
+        try:
+            inputchar=self.nocap(inputchar)
+        except:
+            True
         if inputchar not in self.englishlistfilter01 and inputchar not in self.englishpunctuation:
             return False
         if inputchar in self.englishpunctuation:
             self.addpunc=inputchar
-            #logwrite(self.current_input)
             if self.current_input==None or self.current_input=="":
                 self.commit(self.addpunc+" ")
                 time.sleep(0.1)
@@ -320,8 +330,7 @@ class EngineShortn(Engine):
                 self.addpunc=None
                 return True
         else:
-            self.update_current_input(append=self.nocap(inputchar))
-        logwrite(self.nocap(inputchar))
+            self.update_current_input(append=inputchar)
         ut=self.shortnenginefunction(self.current_input)    
         if ut!=None and type(ut)==list and type(ut)!=None:
             self.setcand(thelist=ut, trailing=self.addpunc)

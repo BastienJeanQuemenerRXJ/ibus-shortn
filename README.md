@@ -40,11 +40,11 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 
 # to do list
- * make a usable caps case system. -> add a detector for caps lock.     remove toggletime. make it such that shortn detects whether caps lock is enabled or not. automatic input conversion scheme to lower case (A->a, B->b). when word is committed with caps lock enabled, make the word committed in (conversion) caps. as for capitalizing only the first letter, add a variable that checks if the first letter of the word was typed in caps.
+ * make a usable caps case system. -> add a detector for caps lock. make it such that caps lock enabled make it such that all words have the beginning letter be caps. typing a "." , pressing enter adds a one time first letter cap. 
+make it such that shortn detects whether caps lock is enabled or not. automatic input conversion scheme to lower case (A->a, B->b). when word is committed with caps lock enabled, make the word committed in (conversion) caps. as for capitalizing only the first letter, add a variable that checks if the first letter of the word was typed in caps.
 
  * writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space
  * fix 'enter' not working on ubuntu text editor
- * make it such that pressing caps makes the text in all caps (while accounting for the shortn algorithm) instead of needing to click left shift twice.
  * add english-dicmaker.py 
  * add frequency sorting for results
  * add customizable settings
