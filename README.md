@@ -40,6 +40,7 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 
 # to do list
+ * there is a problem with the caps system, caps needs to be pressed twice for it to have an effect instead of just once
  * automatic capitalization when a "." dot is entered
  * writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space
  * fix 'enter' not working on ubuntu text editor
