@@ -13,7 +13,7 @@ vs
 
 # Commands
 * pressing 'esc' disables the engine, thereby letting you type normally. repressing it enables it again. keep in mind that pressing 'esc' does not actually unload anything, the engine and dictionary are still running and active. in case of a bug, do ```pkill ibus``` which will disable all ibus IMEs but keep you with non-IME IBus keyboards (russian, french, english, etc). 
-* pressing left shift once will capitalize the first letter of your word. clicking it again makes it all caps. clicking it again reverts to lower case. this is a workaround but it works for now. it is planned to allow you to hold shift to be able to capitalize only the first letter of your word. and to have caps lock work too.
+* caps lock makes it such that the first letter of your word will be capitalized
 * pressing ',.;: before validating your word will add it before your word and then add a space.  ie,  typing "humnty,1" will give "humanity, "
 
 
@@ -40,9 +40,7 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 
 # to do list
- * make a usable caps case system. -> add a detector for caps lock. make it such that caps lock enabled make it such that all words have the beginning letter be caps. typing a "." , pressing enter adds a one time first letter cap. 
-make it such that shortn detects whether caps lock is enabled or not. automatic input conversion scheme to lower case (A->a, B->b). when word is committed with caps lock enabled, make the word committed in (conversion) caps. as for capitalizing only the first letter, add a variable that checks if the first letter of the word was typed in caps.
-
+ * automatic capitalization when a "." dot is entered
  * writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space
  * fix 'enter' not working on ubuntu text editor
  * add english-dicmaker.py 

@@ -7,7 +7,7 @@ def logwrite(the, e=0):
     if e==1:
         the="shortnengine failed because of"+getattr(the, 'message', repr(the))
     the=str(the)
-    with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
+    with open('/home/user/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
 
 
@@ -230,10 +230,7 @@ class EngineShortn(Engine):
         if selected!=None:
             b=selected.text
             if self.capstoggle:
-                try: 
-                    b=self.firstcap(b)
-                except Exception as p:
-                    logwrite(p,e=1)
+                b=self.firstcap(b)
             self.commit(b+" ")
         self.addpunc=None
         self.cleareverything()
