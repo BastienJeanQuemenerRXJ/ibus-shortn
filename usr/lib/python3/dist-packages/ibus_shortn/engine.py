@@ -1,22 +1,21 @@
 __all__ = ["EngineShortn"]
 import time
-
-#this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-def logwrite(the, e=0):
-    #except Exception as the
-    if e==1:
-        the="shortnengine failed because of"+getattr(the, 'message', repr(the))
-    the=str(the)
-    with open('/home/user/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
-        f.writelines(the)
-
-
 import gettext
 from operator import attrgetter
 import gi
 gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
+#this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
+def logwrite(the, e=0):
+    #except Exception as the
+    if e==1:
+        the="shortnengine failed because of"+getattr(the, 'message', repr(the))
+    the=str(the)
+    with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
+        f.writelines(the)
+
+
 
 
 def is_inputnumber(keyval):
@@ -206,13 +205,24 @@ class EngineShortn(Engine):
             except:
                 a+=i
         return a
-    def firstcap(self,the):
-        the=self.nocap(the)
+    def firstcap(self, the):
+        if the==None:
+            return True
         try:
-            a= str(self.capital.get(the[:1]))+str(the[1:])
+            the=self.nocap(the)
         except:
-            a=the
-        return a
+            True
+        if len(the)==1:
+            the=self.capital.get(the)
+            logwrite(the)
+            return the
+        try:
+            a=self.capital.get(the[:1])
+        except:
+            a=the[:1]
+        the=str(str(a)+str(the[1:]))
+        logwrite(the)
+        return the
         
     def allcap(self,the):
         a=""
@@ -267,9 +277,13 @@ class EngineShortn(Engine):
             return sug
     escapetoggle=True
     capstoggle=False
+    #sometimes the code needs an overflow variable. basically pressing one key once will have ibus interpret it as if you pressed it multiple times. these "overflow" variables are meant to prevent this. if a key is pressed multiple times under an interval lesser than 0.3 seconds it will only register it once
+    capsoverflow=time.time()
     def do_process_key_event(self, keyval, keycode, state):
-        if (state & IBus.ModifierType.LOCK_MASK):
+        if keyval==IBus.Caps_Lock and time.time()-self.capsoverflow>0.3:
             self.capstoggle=self.capstoggle==False
+            self.capsoverflow=time.time()
+            return True
         if keyval==IBus.KEY_Return:
             self.forward_key_event(keyval, keycode, state)
             return True
@@ -288,14 +302,19 @@ class EngineShortn(Engine):
         if not self.escapetoggle:
             return False
         if inputchar == IBus.space:
-            if self.current_input!=None:
+            if self.current_input!="":
                 rtr=self.current_input
+                logwrite(rtr)
                 if self.capstoggle:
                     rtr=self.firstcap(rtr)
                 if self.addpunc!=None:
                     rtr+=self.addpunc
-                    self.addpunc=None
-                self.commit(str(str(rtr)+" "))
+                if rtr!=" " and rtr!=None:
+                    self.commit(str(rtr)+" ")
+                else:
+                    self.commit(str(" "))
+            else:
+                self.commit(str(" "))
             self.setcand()
             self.addpunc=None
             self.cleareverything()
@@ -318,7 +337,7 @@ class EngineShortn(Engine):
         except:
             True
         if inputchar not in self.englishlistfilter01 and inputchar not in self.englishpunctuation:
-            return False
+            return False 
         if inputchar in self.englishpunctuation:
             self.addpunc=inputchar
             if self.current_input==None or self.current_input=="":
