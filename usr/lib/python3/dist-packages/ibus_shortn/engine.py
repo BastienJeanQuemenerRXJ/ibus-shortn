@@ -288,13 +288,14 @@ class EngineShortn(Engine):
         if not self.escapetoggle:
             return False
         if inputchar == IBus.space:
-            rtr=self.current_input
-            if self.capstoggle:
-                rtr=self.firstcap(rtr)
-            if self.addpunc!=None:
-                rtr+=self.addpunc
-                self.addpunc=None
-            self.commit(str(str(rtr)+" "))
+            if self.current_input!=None:
+                rtr=self.current_input
+                if self.capstoggle:
+                    rtr=self.firstcap(rtr)
+                if self.addpunc!=None:
+                    rtr+=self.addpunc
+                    self.addpunc=None
+                self.commit(str(str(rtr)+" "))
             self.setcand()
             self.addpunc=None
             self.cleareverything()
