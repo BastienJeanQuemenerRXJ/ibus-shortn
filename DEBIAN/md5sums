@@ -16,11 +16,11 @@ c7b273c417a1bb7cd8be68f4a8289c87  ./usr/share/doc/ibus-shortn/README.md
 af75717334ce90b98c145c13c9cb3441  ./usr/share/glib-2.0/schemas/org.shortn-scheme.ibus.shortn.gschema.xml
 d88955ce5f03182465a4ffc6781ffdf6  ./usr/share/ibus-shortn/setup.ui
 d70ba59ad210edaeca4d3a02e6674d9a  ./usr/share/metainfo/shortn.appdata.xml
-a4e33b8571301f0c0b3b7e2c1fa9d8d6  ./.git/logs/refs/heads/master
-03a146007f4595d952beeff224f6ec25  ./.git/logs/refs/remotes/origin/master
-a4e33b8571301f0c0b3b7e2c1fa9d8d6  ./.git/logs/HEAD
-99c587a40d12316a210cb0bec5158c2d  ./.git/refs/heads/master
-99c587a40d12316a210cb0bec5158c2d  ./.git/refs/remotes/origin/master
+1f64adf3352e4d5750fd2fa4f453456a  ./.git/logs/refs/heads/master
+59473f6a255249d560ac719ae8ec7ac8  ./.git/logs/refs/remotes/origin/master
+1f64adf3352e4d5750fd2fa4f453456a  ./.git/logs/HEAD
+e5daaec02e820a4584e5f85b0d23f798  ./.git/refs/heads/master
+e5daaec02e820a4584e5f85b0d23f798  ./.git/refs/remotes/origin/master
 5a8d195306a15cf7e473e27fba509842  ./.git/objects/ca/d591a7c47d839f8c009d8d5801c8bb0b929717
 f005b3811d4ad00d444349bf2e76efee  ./.git/objects/f1/06480deaa9b86bf87fee170809d92b2af76760
 2cb7bab5d88652411d5be67858d5b6e4  ./.git/objects/25/58109ecfcd047cd9ea72b1663e0967773fb84c
@@ -98,6 +98,7 @@ bafd7a14e7a234e92d760a683d8377fa  ./.git/objects/e4/e187719e8e04bcb3ddfef5c5cf56
 dd6a986df9375dbf858f5b677ad4e91e  ./.git/objects/e4/e14db48b69a6a7d175aa0c0e6441060e5b8fe7
 61366a490dc70e8deda2bb4edea42adb  ./.git/objects/5f/60f4777040057707491b54521c66652bc8ffca
 46cb641ef1b4c71e36addf2a32bd6590  ./.git/objects/5f/5497795fc36c3af4be51537d97e2f86601ce2a
+eff9c0fc6246719e59b521014f2adbc6  ./.git/objects/5f/32bd9752cc51701059aee50e758c274b64f2b5
 1a92cd984a8783252c5665a8c83c623f  ./.git/objects/1c/f88c1077565d6112266bf153824b06b0cbbc2d
 9a5a0a0caf51ffc353bfcd132f13e4bc  ./.git/objects/1c/aabd87cdfa9dabfa2ab96d32aa6612f2ebf098
 07535a44206294d7ec91947a75ca72ec  ./.git/objects/1c/5a2c0f398ae9321752ed7fb1a8c12d03a19112
@@ -122,6 +123,7 @@ e2f4d0c2598d2acdfb2883873425ef0f  ./.git/objects/f0/2cb086cf4231e6697746e049d1b0
 b73ad7b149b346fca9c3a60eec5cffbb  ./.git/objects/d8/88f1e1e01fdeb446d1e104663564caa77034f3
 ee3463de4ae81799a7304bc3c606dae2  ./.git/objects/a9/0f96b791e6ea6f56e8680840f6fa1fab0126a2
 3d1873592eb184a431ee79e00a858bdb  ./.git/objects/17/8f68ebceffe48f517d0c5a9c9c16c5c17342f8
+5b61a72d4d1f2f3b00033856339d2820  ./.git/objects/17/937a8adb7e40bb8a556c3c8d80230158b34dc7
 47b2383ddea1636a81a24bf43c44ec3d  ./.git/objects/ab/8b58bd5f0ecddadada0f96037a14f3860739ea
 03783d0eebd57973faf6b02c8edb9dfc  ./.git/objects/ab/00ec4338ca0c435efe1b4a2f05ccbb3a4b426e
 124c4a7e26b26ed9081e3c9e1c8ecf20  ./.git/objects/ab/8acafffad3a9d00fbb71f3584a29b611082bab
@@ -182,6 +184,7 @@ e7b93b3d75192d7bd03a7647785fadbb  ./.git/objects/29/5c4c2bde9d0a665fd43c98d9a3ec
 e70f66087b2a910b4fe2ecef1e9174bb  ./.git/objects/3d/03c8a863e1af42af72974f813a05aa3bdab3cf
 13c0caaaa642f1c081dabf127ef526a9  ./.git/objects/3d/6d73fa616a571d90f98c66eb045256cafe42b5
 7e59b5803ca0d22c7203f81cdbe863e7  ./.git/objects/3d/538de3fe5b0e089cd0619bb5b190933595ac1f
+5d44f3afead925ec8135a4d48a21ffd5  ./.git/objects/35/b2a25b20c3a58d480e54a433cd78e4cdf4b17c
 62939baafe578a9b844ac3d9c85121ee  ./.git/objects/9e/d28a44e6f3c0396ef63fcc231b3bce8dee9383
 64a0b705cbd0efb9d37ff37e8874d2e3  ./.git/objects/9e/01ccaa7721417cf70ca4fd84aca4b94b6ea13b
 f6d276d0f19b44286f66134bedddbfe6  ./.git/objects/ad/ca5106ef749af758d339bdec9d3ea1d62bd895
@@ -192,6 +195,7 @@ bba64798344ae77fc01dd87fc0a78176  ./.git/objects/fd/ea43a8f51622cb6069761a5b92cf
 65aeb2f7f174d3fd2acca2d86b127e5f  ./.git/objects/2c/3e78628178a9b4f478e9f734e462a3d1b76afa
 920525efab587481413a8b9005a3ce58  ./.git/objects/40/095cb44be521e510416210dc114019cfaded99
 9c2c79b749889bb998d4329c3e424410  ./.git/objects/e3/fbcd1926add45b7c18a4477b218383d0569fcc
+991419973ef2d939652b8d64f0f06b1e  ./.git/objects/e3/004fc2c4d2034973e859668c7c25aa92bd8c45
 234614cf56fdb8ffd80d3e4fe3540faf  ./.git/objects/31/ef61408248ab4ba2c8f1c14bb9dac58804b14e
 13a2d92e9bf0b9537f4de4f26efd4b01  ./.git/objects/02/da428cd72afec46e20bf18d9a5e5d62c25f1bf
 c3c198668538629c9a878960db32a764  ./.git/objects/02/772c8e7b5997870dbf155b152ad0342e6eba12
@@ -206,6 +210,7 @@ f66b446ee1007b4b92f7173eb4134ed8  ./.git/objects/d6/5f81b79cd24cb45ce55a0f56a2b1
 6d1f51d2f1b21ba973a80b244a619c98  ./.git/objects/01/4be8d92f8f4a99f38e6877e2239a5dd89c1281
 187e5d715c310c2df5ba1f12957a9f9f  ./.git/objects/4f/c567cb2879946a2489e1be4e4e8eab91732ab7
 92c20db6d735b5162147834c5024fb0a  ./.git/objects/4f/7edd8ab840f4ce3ec2fb14cc77a53209e35ccf
+d86d36bbdbde77ccc1e2d64ede99c432  ./.git/objects/4f/898e8eb93f39204ee8664f5d7cc0a7c3d2c01e
 fc43e90b588855d36709ba0111ad07ac  ./.git/objects/16/525040c137fbc4ee09041ec6a9be5d06283e88
 3126f62e18d81756172806dd4efce6c1  ./.git/objects/dd/d7ec67b8be0d898096e3c0a994520c27a45423
 2e9f7d65021e1201885f7c022dc98315  ./.git/objects/dd/64cfe7f51c8d581238d5b088b5411ac7cee20e
@@ -226,6 +231,7 @@ cd8e4bf22da8c10514fad59373184b22  ./.git/objects/94/f2d0493f3dadbaff4bbdfb8cc524
 28179bf7a58cc58aaf8f76d71f640993  ./.git/objects/19/8048efd0bf9e56fe24abb4712bff3bb3675563
 4291fa9a9d8b4a466794cc4e3c4bc298  ./.git/objects/b7/bcbed9ca18a0b1670cfd1fa50f437d5cfd7d03
 ccf04a3da3740fc3ac39d997b14d40c4  ./.git/objects/b7/1cc2927f610f37b2a8cd7600a752369b12460c
+0395a91ec4e2187a19b0532d6f6c1623  ./.git/objects/66/bb9453601895529c7ba7b2b44d1b24511f51f1
 32e02705423b9eed9359debf15f5f08b  ./.git/objects/67/77b4d33319fb07ceb722ae045402b0a313a795
 644c0b4fc749216a2234c64bfba407bb  ./.git/objects/c2/4e74cd659603b1ae3449738a7fffd455d6c04e
 25d2e241ee03edd32147e4160414357f  ./.git/objects/c1/ea1b977c95331c2c9b12788e06b57e3436004e
@@ -266,9 +272,9 @@ a0b2633a2c8e97501610bd3f73da66fc  ./.git/hooks/fsmonitor-watchman.sample
 ce562e08d8098926a3862fc6e7905199  ./.git/hooks/applypatch-msg.sample
 d1e67cf05070dcb10cf2bb4982470ab8  ./.git/config
 19cf319709f7efc18409e9cc40a2e6aa  ./.git/FETCH_HEAD
-cb5d131507602881db332ea614b08130  ./.git/index
+fe6db282e65932eb842261f43ab671b2  ./.git/index
 a0a7c3fff21f2aea3cfa1d0316dd816c  ./.git/description
 4cf2d64e44205fe628ddd534e1151b58  ./.git/HEAD
-00589edd958a631ba5f174e98bc38d1e  ./.git/COMMIT_EDITMSG
+698d9f366c264e006f3633436aa943a7  ./.git/COMMIT_EDITMSG
 5aad2cef1fdc470b83e00802c4ef2972  ./.git/ORIG_HEAD
 128a1eb846c5fc0473e3fea5f2f09337  ./README.md
