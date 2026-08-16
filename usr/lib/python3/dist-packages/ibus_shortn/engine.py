@@ -233,7 +233,11 @@ class EngineShortn(Engine):
 
     def do_number(self, keyval):
         if self.lookuptable.get_number_of_candidates():
-            return self.do_select_candidate(int(IBus.keyval_to_unicode(keyval)))
+            a=int(IBus.keyval_to_unicode(keyval))
+            if a==0:
+                return False
+            else:
+                return self.do_select_candidate(a)
     def do_select_candidate(self, index):
         page_index = self.lookuptable.get_cursor_pos()
         selected = self.lookuptable.get_candidate(page_index+index-1)
