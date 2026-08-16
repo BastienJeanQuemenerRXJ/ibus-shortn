@@ -7,6 +7,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
+"""
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -14,7 +15,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-
+"""
 
 
 
@@ -214,14 +215,12 @@ class EngineShortn(Engine):
             True
         if len(the)==1:
             the=self.capital.get(the)
-            logwrite(the)
             return the
         try:
             a=self.capital.get(the[:1])
         except:
             a=the[:1]
         the=str(str(a)+str(the[1:]))
-        logwrite(the)
         return the
         
     def allcap(self,the):
@@ -287,7 +286,7 @@ class EngineShortn(Engine):
         if keyval==IBus.Caps_Lock and time.time()-self.capsoverflow>0.3:
             self.capstoggle=self.capstoggle==False
             self.capsoverflow=time.time()
-            return True
+            return False
         if keyval==IBus.KEY_Return:
             self.forward_key_event(keyval, keycode, state)
             return True
@@ -308,7 +307,6 @@ class EngineShortn(Engine):
         if inputchar == IBus.space:
             if self.current_input!="":
                 rtr=self.current_input
-                logwrite(rtr)
                 if self.capstoggle:
                     rtr=self.firstcap(rtr)
                 if self.addpunc!=None:
