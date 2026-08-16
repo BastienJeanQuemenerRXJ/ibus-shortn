@@ -44,6 +44,7 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
  * automatic capitalization when a "." dot is entered
  * fix 'enter' not working on ubuntu text editor
  * add english-dicmaker.py 
+ * add a native way to add words to dictionary
  * add frequency sorting for results
  * add customizable settings
  * add support for non ISO basic Latin alphabet languages (russian, french, german)->the issue is that non iso basic latin characters take way more place (for example a russian shortn dictionary takes 40mb while the english one takes 8mb. this is because the code for basic latin letters are short (latin 'a' in hex is '41', whereas cyrillic "а" is '0xD0 0xB0' which enhances necessary storage for cyrillic words. the idea is that non basic latin characters will be converted into latin as output and input. IE, Russian types "алфвт", IME converts it into alfvt, IME then searches alfvt into the russian dictionary, finds "alfvt->alfavit", then at the end converts alfavit into алфавит. since cyrillic has more letters than latin, and the conversion needs to be injective (1 to 1), case (a->A) can be used since it's not used in dictionaries (no difference between Алфавит and алфавит in the dictionary since case is inputted by the user). so the conversion scheme will look like "а <=> a", "б <=> b", "я <=> A", "в <=> v", "ю <=> U", "ъ <=> x", "ь <=> X" etc
