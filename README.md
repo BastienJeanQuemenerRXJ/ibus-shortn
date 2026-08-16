@@ -15,8 +15,10 @@ vs
 * pressing 'esc' disables the engine, thereby letting you type normally. repressing it enables it again. keep in mind that pressing 'esc' does not actually unload anything, the engine and dictionary are still running and active. in case of a bug, do ```pkill ibus``` which will disable all ibus IMEs but keep you with non-IME IBus keyboards (russian, french, english, etc). 
 * caps lock makes it such that the first letter of your word will be capitalized
 * pressing ',.;: before validating your word will add it before your word and then add a space.  ie,  typing "humnty,1" will give "humanity, "
-* to add words to the dictionary, make a .txt file with all your words, separated by a newline only, in lower caps, and only in basic latin iso  (no è or ù). then,  do 
-```cd && sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn && nano custom-words.txt && python3 english-make-dict.py && cd && cd ibus-shortn/ && find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; > DEBIAN/md5sums && cd .. && dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i ibus-shortn.deb && ibus restart```
+* to add words to the dictionary, do
+```cd && sudo rm -rf ibus-shortn && sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn && sudo nano custom-words.txt && sudo python3 english-make-dict.py && cd && cd ibus-shortn/ && sudo bash -c "find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; > DEBIAN/md5sums" && cd .. && sudo dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i ibus-shortn.deb && ibus restart```
+when you are prompted to write in 'custom-words.txt' type all your words in lower caps, and only in basic latin iso  (no è or ù), separated by a linebreak. do ctrl s then ctrl x.
+
 
 
 # installing
@@ -41,7 +43,7 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 
 # to do list
-
+ * remake the entire installation process. make it use apt. 
  * despaghettify the code. remove unnecessary things. make punctuation system at the end of the process to fix the "writing "mcknight?" will only show "mcknight" but still output "mcknight? " if you press space" interface issue (make it only show "mcknight" and typing say "truth?" will only show "truth" 
  * automatic capitalization when a "." dot is entered
  * fix 'enter' not working on ubuntu text editor
