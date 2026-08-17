@@ -4,7 +4,7 @@
   <description>Shortn Component</description>
   <exec>/usr/libexec/ibus-engine-shortn --ibus shortn</exec>
   <version>2.4</version>
-  <author>The IBus Shortn authors</author>
+  <author>Bastien Jean Quemener</author>
   <license>GPLv3+</license>
   <homepage>https://github.com/BastienJeanQuemenerRXJ/ibus-shortn</homepage>
   <textdomain>ibus-shortn</textdomain>

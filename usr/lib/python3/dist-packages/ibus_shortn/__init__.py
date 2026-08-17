@@ -1,6 +1,7 @@
-# Copyright (c)  - The IBus Shortn authors, forked from IBus Cangjie
+# Copyright (c) 2012-2013 - The IBus Cangjie authors (https://gitlab.freedesktop.org/cangjie/ibus-cangjie/)
+# Copyright (c) 2026 - Bastien Jean Quemener <shortn@bastien.live>  (github.com/BastienJeanQuemerRXJ/ibus-shortn)
 #
-# This file is part of ibus-shortn, the IBus Shortn input method engine (github.com/BastienJeanQuemerRXJ/ibus-shortn)
+# This file is part of ibus-shortn, the IBus Shortn input method engine, forked from ibus-cangjie.
 #
 # ibus-shortn is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,6 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ibus-shortn.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
 
 
 
