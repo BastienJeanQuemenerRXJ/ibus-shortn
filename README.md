@@ -42,7 +42,7 @@ To launch it you can either do ```ibus engine shortn``` to launch it from the te
 
 will add fedora and arch soon
 
-#Copyright
+# Copyright
 
 
  Copyright (c) 2012-2013 - The IBus Cangjie authors (https://gitlab.freedesktop.org/cangjie/ibus-cangjie/)
