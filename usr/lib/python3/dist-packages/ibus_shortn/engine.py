@@ -66,6 +66,7 @@ class Engine(IBus.Engine):
     #self.current_showtext    this is the name of what's being shown in the editable text input
     #shows you thestr in the edit window
     def showtext(self, thestr):
+        thestr=self.appendables(thestr)
         text = IBus.Text.new_from_string(thestr)
         super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
         # We don't use pre-edit at all for Shortn or Quick. However, some applications (most notably Firefox) fail to correctly position the candidate popup, as if they got confused by the absence of a pre-edit text. fix this 
@@ -166,15 +167,11 @@ class Engine(IBus.Engine):
             if self.clear_on_next_input:
                 self.cleareverything()
             self.current_input += append
-            self.current_showtext +=append
         elif drop is not None:
             self.clear_on_next_input = False
             self.current_input = self.current_input[:-drop]
-            self.current_showtext = self.current_showtext[:-drop]
-
         else:
             raise ValueError("You must specify either 'append' or 'drop'")
-        self.showtext(self.current_showtext)        
 
 
 
@@ -231,11 +228,16 @@ class EngineShortn(Engine):
             else:
                 return self.do_select_candidate(a)
     def appendables(self,the):
+        if the==" ":
+            return " "
+        if the=="":
+            return ""
+        if the==None:
+            return None
         if self.capstoggle:
             the=self.firstcap(the)
         if self.addpunc!=None:
             the+=self.addpunc
-        self.addpunc=None
         return the+" "
     def do_select_candidate(self, index):
         page_index = self.lookuptable.get_cursor_pos()
@@ -323,6 +325,7 @@ class EngineShortn(Engine):
                 return False
             self.update_current_input(drop=1)
             self.setcand(self.shortnenginefunction(self.current_input))
+            self.showtext(self.current_input)
             return True
         elif is_inputnumber(inputchar):
             return self.do_number(inputchar)
@@ -346,6 +349,7 @@ class EngineShortn(Engine):
         ut=self.shortnenginefunction(self.current_input)    
         if ut!=None and type(ut)==list and type(ut)!=None:
             self.setcand(thelist=ut)
+        self.showtext(self.current_input)
         return True
 
         
