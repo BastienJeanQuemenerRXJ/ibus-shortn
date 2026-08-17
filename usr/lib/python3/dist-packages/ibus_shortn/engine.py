@@ -308,8 +308,6 @@ class EngineShortn(Engine):
                 rtr=self.appendables(self.current_input)
                 if rtr!=" " and rtr!=None:
                     self.commit(str(rtr))
-                else:
-                    self.commit(str(" "))
             else:
                 self.commit(str(" "))
             self.setcand()
