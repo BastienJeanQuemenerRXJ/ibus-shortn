@@ -31,7 +31,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-
+"""
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -39,7 +39,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-
+"""
 
 
 
@@ -303,10 +303,12 @@ class EngineShortn(Engine):
         else:
             return sug
     escapetoggle=True
+    escapeoverflow=time.time()
+
     capstoggle=False
     #sometimes the code needs an overflow variable. basically pressing one key once will have ibus interpret it as if you pressed it multiple times. these "overflow" variables are meant to prevent this. if a key is pressed multiple times under an interval lesser than 0.3 seconds it will only register it once
     capsoverflow=time.time()
-    
+
     #work in progress capitalize next word after dot pressed system
     """
     self.dotcap="Off"
@@ -322,7 +324,6 @@ class EngineShortn(Engine):
             self.capstoggle=False
             self.dotcap="Off"
     """
-    escapeoverflow=time.time()
     def do_process_key_event(self, keyval, keycode, state):
         if keyval==IBus.Escape and time.time()-self.escapeoverflow>0.3:
             self.escapetoggle= not self.escapetoggle
