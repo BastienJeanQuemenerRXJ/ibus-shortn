@@ -34,10 +34,6 @@ class Engine(IBus.Engine):
         schema_id = "org.shortn-scheme.ibus.%s" % self.__name__
         self.settings = Gio.Settings(schema_id=schema_id)
         self.settings.connect("changed", self.on_value_changed)
-
-
-        self.accencoder=lambda x:x
-        self.accdecoder=lambda x:x
         self.current_input = ""
         self.current_showtext = ""
         self.clear_on_next_input = False
@@ -70,7 +66,6 @@ class Engine(IBus.Engine):
     #self.current_showtext    this is the name of what's being shown in the editable text input
     #shows you thestr in the edit window
     def showtext(self, thestr):
-        thestr=self.accdecoder(thestr)
         text = IBus.Text.new_from_string(thestr)
         super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
         # We don't use pre-edit at all for Shortn or Quick. However, some applications (most notably Firefox) fail to correctly position the candidate popup, as if they got confused by the absence of a pre-edit text. fix this 
@@ -81,7 +76,7 @@ class Engine(IBus.Engine):
     
 
     #sets the list of candidates from a list of strings called thelist. if thelist==None then removes the candidate list panel
-    def setcand(self, thelist=None,tables=False, trailing=None, additionalfunc=None):
+    def setcand(self, thelist=None,tables=False, additionalfunc=None):
         if tables==True:
             if not self.current_input:
                 self.setcand()
@@ -94,8 +89,6 @@ class Engine(IBus.Engine):
                 abcd=c
                 if additionalfunc!=None:
                     abcd=additionalfunc(abcd)
-                if trailing!=None:
-                    abcd+=trailing
                 self.lookuptable.append_candidate(IBus.Text.new_from_string(abcd))
                 num_candidates += 1
         self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
@@ -237,14 +230,20 @@ class EngineShortn(Engine):
                 return False
             else:
                 return self.do_select_candidate(a)
+    def appendables(self,the):
+        if self.capstoggle:
+            the=self.firstcap(the)
+        if self.addpunc!=None:
+            the+=self.addpunc
+        self.addpunc=None
+        return the+" "
     def do_select_candidate(self, index):
         page_index = self.lookuptable.get_cursor_pos()
         selected = self.lookuptable.get_candidate(page_index+index-1)
         if selected!=None:
             b=selected.text
-            if self.capstoggle:
-                b=self.firstcap(b)
-            self.commit(b+" ")
+            b=self.appendables(b)
+            self.commit(b)
         self.addpunc=None
         self.cleareverything()
         return True
@@ -306,13 +305,9 @@ class EngineShortn(Engine):
             return False
         if inputchar == IBus.space:
             if self.current_input!="":
-                rtr=self.current_input
-                if self.capstoggle:
-                    rtr=self.firstcap(rtr)
-                if self.addpunc!=None:
-                    rtr+=self.addpunc
+                rtr=self.appendables(self.current_input)
                 if rtr!=" " and rtr!=None:
-                    self.commit(str(rtr)+" ")
+                    self.commit(str(rtr))
                 else:
                     self.commit(str(" "))
             else:
@@ -352,7 +347,7 @@ class EngineShortn(Engine):
             self.update_current_input(append=inputchar)
         ut=self.shortnenginefunction(self.current_input)    
         if ut!=None and type(ut)==list and type(ut)!=None:
-            self.setcand(thelist=ut, trailing=self.addpunc)
+            self.setcand(thelist=ut)
         return True
 
         
