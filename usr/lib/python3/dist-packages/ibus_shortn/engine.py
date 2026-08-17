@@ -31,7 +31,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-"""
+
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -39,7 +39,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-"""
+
 
 
 
@@ -322,29 +322,31 @@ class EngineShortn(Engine):
             self.capstoggle=False
             self.dotcap="Off"
     """
-            
+    escapeoverflow=time.time()
     def do_process_key_event(self, keyval, keycode, state):
+        if keyval==IBus.Escape and time.time()-self.escapeoverflow>0.3:
+            self.escapetoggle= not self.escapetoggle
+            self.cleareverything()
+            self.escapeoverflow=time.time()
+            return True
+        if not self.escapetoggle:
+            return False
         if keyval==IBus.Caps_Lock and time.time()-self.capsoverflow>0.3:
             self.capstoggle=self.capstoggle==False
             self.capsoverflow=time.time()
             self.showtext(self.current_input)
             return False
         if keyval==IBus.KEY_Return:
-            self.forward_key_event(keyval, keycode, state)
+            #self.forward_key_event(keyval,  keycode, state)
             return False
         elif (state & IBus.ModifierType.RELEASE_MASK):
             return False
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
             # Ignore Alt+<key> and Ctrl+<key>
             return False
-        elif keyval==IBus.Escape:
-            self.escapetoggle=self.escapetoggle==False
-            self.cleareverything()
         return self.do_inputchar(keyval)
     
     def do_inputchar(self, inputchar):
-        if not self.escapetoggle:
-            return False
         if inputchar == IBus.space:
             if self.current_input!="":
                 rtr=self.appendables(self.current_input)
