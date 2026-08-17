@@ -44,8 +44,8 @@ will add fedora and arch soon
 
 # Copyright
 
-
  Copyright (c) 2012-2013 - The IBus Cangjie authors (https://gitlab.freedesktop.org/cangjie/ibus-cangjie/)
+ list of English words upon which the shortn dictionary uses is https://github.com/dwyl/english-words/blob/master/words_alpha.txt
  Copyright (c) 2026 - Bastien Jean Quemener <shortn@bastien.live>  (github.com/BastienJeanQuemerRXJ/ibus-shortn)
 
  This file is part of ibus-shortn, the IBus Shortn input method engine, forked from ibus-cangjie.
