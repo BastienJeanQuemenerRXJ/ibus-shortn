@@ -181,10 +181,10 @@ class Engine(IBus.Engine):
     def cleareverything(self):
         """Clear the current input."""
         self.current_input = ""
-        self.current_showtext=""
         self.clear_on_next_input = False
         self.setcand(tables=True)
-        self.showtext(self.current_showtext)
+        self.addpunc=None
+        self.showtext("")
     #this updates the showtext variable and current_input variable. append is what you add to the current_input and current_showtext, drop is how much you remove
     def update_current_input(self, append=None, drop=None):
         if append is not None:
@@ -270,7 +270,6 @@ class EngineShortn(Engine):
             b=selected.text
             b=self.appendables(b)
             self.commit(b)
-        self.addpunc=None
         self.cleareverything()
         return True
     #called by ibus
@@ -311,6 +310,7 @@ class EngineShortn(Engine):
         if keyval==IBus.Caps_Lock and time.time()-self.capsoverflow>0.3:
             self.capstoggle=self.capstoggle==False
             self.capsoverflow=time.time()
+            self.showtext(self.current_input)
             return False
         if keyval==IBus.KEY_Return:
             self.forward_key_event(keyval, keycode, state)
@@ -322,10 +322,8 @@ class EngineShortn(Engine):
             return False
         elif keyval==IBus.Escape:
             self.escapetoggle=self.escapetoggle==False
-            self.addpunc=None
             self.cleareverything()
         return self.do_inputchar(keyval)
-
     def do_inputchar(self, inputchar):
         if not self.escapetoggle:
             return False
@@ -337,7 +335,6 @@ class EngineShortn(Engine):
             else:
                 self.commit(str(" "))
             self.setcand()
-            self.addpunc=None
             self.cleareverything()
             return True
         elif inputchar == IBus.Page_Down:
@@ -366,7 +363,6 @@ class EngineShortn(Engine):
                 self.commit(self.addpunc+" ")
                 time.sleep(0.1)
                 self.cleareverything()
-                self.addpunc=None
                 return True
         else:
             self.update_current_input(append=inputchar)
