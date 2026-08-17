@@ -306,6 +306,23 @@ class EngineShortn(Engine):
     capstoggle=False
     #sometimes the code needs an overflow variable. basically pressing one key once will have ibus interpret it as if you pressed it multiple times. these "overflow" variables are meant to prevent this. if a key is pressed multiple times under an interval lesser than 0.3 seconds it will only register it once
     capsoverflow=time.time()
+    
+    #work in progress capitalize next word after dot pressed system
+    """
+    self.dotcap="Off"
+    def dotcap(self,info):
+        if self.dotcap=="Off" and info==". pressed":
+            self.dotcap="Triggered"
+            return True
+        elif self.dotcap=="Triggered" and info=="space, enter, word selected or commit":
+            self.capstoggle=True
+            self.dotcap="disablenext"
+            return True
+        elif self.disablenext=="On" and info=="space, enter, word selected or commit":
+            self.capstoggle=False
+            self.dotcap="Off"
+    """
+            
     def do_process_key_event(self, keyval, keycode, state):
         if keyval==IBus.Caps_Lock and time.time()-self.capsoverflow>0.3:
             self.capstoggle=self.capstoggle==False
@@ -324,8 +341,12 @@ class EngineShortn(Engine):
             self.escapetoggle=self.escapetoggle==False
             self.cleareverything()
         return self.do_inputchar(keyval)
+    
     def do_inputchar(self, inputchar):
         if not self.escapetoggle:
+            return False
+        c = inputchar
+        if not c or c == '\n' or c == '\r' or c==IBus.Return:
             return False
         if inputchar == IBus.space:
             if self.current_input!="":
@@ -361,12 +382,11 @@ class EngineShortn(Engine):
             self.addpunc=inputchar
             if self.current_input==None or self.current_input=="":
                 self.commit(self.addpunc+" ")
-                time.sleep(0.1)
                 self.cleareverything()
                 return True
         else:
             self.update_current_input(append=inputchar)
-        ut=self.shortnenginefunction(self.current_input)    
+        ut=self.shortnenginefunction(self.current_input)
         if ut!=None and type(ut)==list and type(ut)!=None:
             self.setcand(thelist=ut)
         self.showtext(self.current_input)
