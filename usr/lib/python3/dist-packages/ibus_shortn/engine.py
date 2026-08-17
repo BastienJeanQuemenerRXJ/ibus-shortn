@@ -331,7 +331,7 @@ class EngineShortn(Engine):
             return False
         if keyval==IBus.KEY_Return:
             self.forward_key_event(keyval, keycode, state)
-            return True
+            return False
         elif (state & IBus.ModifierType.RELEASE_MASK):
             return False
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
@@ -344,9 +344,6 @@ class EngineShortn(Engine):
     
     def do_inputchar(self, inputchar):
         if not self.escapetoggle:
-            return False
-        c = inputchar
-        if not c or c == '\n' or c == '\r' or c==IBus.Return:
             return False
         if inputchar == IBus.space:
             if self.current_input!="":
