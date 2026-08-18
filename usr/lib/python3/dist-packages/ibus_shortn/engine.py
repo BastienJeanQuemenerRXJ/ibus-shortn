@@ -1,13 +1,4 @@
-#!/usr/bin/python3
-# Copyright (c) 2012-2013 - The IBus Cangjie authors (https://gitlab.freedesktop.org/cangjie/ibus-cangjie/)
-# Copyright (c) 2026 - Bastien Jean Quemener <shortn@bastien.live>  (github.com/BastienJeanQuemerRXJ/ibus-shortn)
-#
-# This file is part of ibus-shortn, the IBus Shortn input method engine, forked from ibus-cangjie.
-#
-# ibus-shortn is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+
 #
 # ibus-shortn is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -65,11 +56,12 @@ english=language(
     {"?", "!", ".", ";", ","},
     "en-dic.json"
     )
-#
 """
+#it doesn't work because decodefrench is before french=language but still calls it. so make decodefrench and encodefrench inside french=language or add a slot for functions in the class language 
 #make encode like:"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"
 #turn this into a lambda and add it inside french=language shit
 frenchencode={"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}
+frenchdecode={"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}
 def encodefrench(the):
     a=""
     for i in the:
@@ -87,14 +79,22 @@ def encodefrench(the):
             k=i
         a+=k
     return a
-            
+def decodefrench(the):
+    a=""
+    for i in the:
+        try:
+            k=frenchdecode.get(i)
+        except:
+            k=i
+        a+=k
+    return a          
         
 french=language(
     {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ö", "ä", "ü", "ï", "ë", "ù", "è", "à", "ç", "ô", "â", "ê", "î", "û", "é", "'"},
     { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " ","ö":"Ö","ä":"Ä","ü":"Ü","ï":"Ï","ë":"Ë","ù":"Ù","è":"È","à":"À","ç":"Ç","ô":"Ô","â":"Â","ê":"Ê","î":"Î","û":"Û","é":"É" },
     {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " ", "Ö":"ö","Ä":"ä","Ü":"ü","Ï":"ï","Ë":"ë","Ù":"ù","È":"è","À":"à","Ç":"ç","Ô":"ô","Â":"â","Ê":"ê","Î":"î","Û":"û","É":"é"},
-    lambda x:x,  this is eencode so put frenchencode here
-    lambda x:x, put reverse of frenchencode here
+    lambda x : encodefrench(x),
+    lambda x : decodefrench(x),
     {'a', 'e', 'i', 'o', 'u', 'y', "O", "A", "U", "I", "E", "Y", "R", "W", "C", "K", "S", "F", "V", "N", "M"},
     {"?", "!", ".", ";", ","},
     "en-dic.json"
@@ -104,7 +104,7 @@ overarchinglanguage=english
 
 
 
-
+#i feel that it's ugly that is_inputnumber isn't inside class engine but whatever
 #Is the `keyval` param a numeric input, e.g to select a candidate.
 def is_inputnumber(keyval):
     return ((keyval in range(getattr(IBus, "0"), getattr(IBus, "9")+1)) or
