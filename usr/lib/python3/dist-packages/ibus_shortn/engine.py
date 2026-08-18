@@ -43,14 +43,76 @@ def logwrite(the, e=0):
 
 
 
+#this defines how to handle the localization of languages in terms of shortn engine
+class language:
+    def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname):
+        self.originalalphabet = originalalphabet  
+        self.originalalphabetlowercasetouppercase = originalalphabetlowercasetouppercase
+        self.originalalphabetuppercasetolowercase = originalalphabetuppercasetolowercase
+        self.encodingfromoriginal = encodingfromoriginal
+        self.decodingtooriginal = decodingtooriginal
+        self.encodedvowel = encodedvowel
+        self.punctuation = punctuation
+        self.dictionaryname = dictionaryname
+
+english=language(
+    {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"},
+    { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " "},
+    {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " "},
+    lambda x:x,
+    lambda x:x,
+    {'a', 'e', 'i', 'o', 'u', 'y'},
+    {"?", "!", ".", ";", ","},
+    "en-dic.json"
+    )
+#
+"""
+#make encode like:"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"
+#turn this into a lambda and add it inside french=language shit
+frenchencode={"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}
+def encodefrench(the):
+    a=""
+    for i in the:
+        try:
+            k=french.originalalphabetuppercasetolowercase(i)
+        except:
+            k=i
+        a+=k
+    the=a
+    a=""
+    for i in the:
+        try:
+            k=frenchencode.get(i)
+        except:
+            k=i
+        a+=k
+    return a
+            
+        
+french=language(
+    {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ö", "ä", "ü", "ï", "ë", "ù", "è", "à", "ç", "ô", "â", "ê", "î", "û", "é", "'"},
+    { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " ","ö":"Ö","ä":"Ä","ü":"Ü","ï":"Ï","ë":"Ë","ù":"Ù","è":"È","à":"À","ç":"Ç","ô":"Ô","â":"Â","ê":"Ê","î":"Î","û":"Û","é":"É" },
+    {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " ", "Ö":"ö","Ä":"ä","Ü":"ü","Ï":"ï","Ë":"ë","Ù":"ù","È":"è","À":"à","Ç":"ç","Ô":"ô","Â":"â","Ê":"ê","Î":"î","Û":"û","É":"é"},
+    lambda x:x,  this is eencode so put frenchencode here
+    lambda x:x, put reverse of frenchencode here
+    {'a', 'e', 'i', 'o', 'u', 'y', "O", "A", "U", "I", "E", "Y", "R", "W", "C", "K", "S", "F", "V", "N", "M"},
+    {"?", "!", ".", ";", ","},
+    "en-dic.json"
+    )
+"""
+overarchinglanguage=english
+
+
+
+
+#Is the `keyval` param a numeric input, e.g to select a candidate.
 def is_inputnumber(keyval):
-    """Is the `keyval` param a numeric input, e.g to select a candidate."""
     return ((keyval in range(getattr(IBus, "0"), getattr(IBus, "9")+1)) or
             (keyval in range(IBus.KP_0, IBus.KP_9+1)))
 
 
 class Engine(IBus.Engine):
-    """The base class for Shortn and Quick engines."""
+    """The base class for Shortn engines."""
     def __init__(self):
         self.dic=self.loaddic()
         thename=self.__name__
@@ -68,7 +130,7 @@ class Engine(IBus.Engine):
         self.init_properties()
         self.init_shortn()
     #loads dictionary. call it only once. the dictionary stays loaded. to call it. self.dic. 
-    def loaddic(self,curdic="/usr/lib/python3/dist-packages/ibus_shortn/en-dic.json"):
+    def loaddic(self,curdic="/usr/lib/python3/dist-packages/ibus_shortn/"+overarchinglanguage.dictionaryname):
         try:
             import json
             with open(curdic,'r') as dic:
@@ -110,7 +172,7 @@ class Engine(IBus.Engine):
         if thelist!=None:
             num_candidates = 0
             for c in thelist:
-                abcd=c
+                abcd=overarchinglanguage.decodingtooriginal(c)
                 self.lookuptable.append_candidate(IBus.Text.new_from_string(abcd))
                 num_candidates += 1
         self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
@@ -200,15 +262,15 @@ class EngineShortn(Engine):
     __gtype_name__ = "EngineShortn"
     __name__ = "shortn"
     #list of vowels
-    vowels={'a', 'e', 'i', 'o', 'u', 'y'}
+    vowels=overarchinglanguage.encodedvowel
     #every character that shortn accepts as inputtable to the engine
-    englishlistfilter={"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"}
+    acceptedshortnenginecharacterlist=overarchinglanguage.originalalphabet
     #appendable things to characters
-    englishpunctuation={"?", "!", ".", ";", ","}
+    commonpunctuation=overarchinglanguage.punctuation
     #turn lowercase to uppercase
-    capital ={ "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " "}
+    capital=overarchinglanguage.originalalphabetlowercasetouppercase
     #turn uppercase to lowercase
-    nocaplist = {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " "}
+    nocaplist=overarchinglanguage.originalalphabetuppercasetolowercase
     #punctuation variable
     addpunc=None
     #turns a word into all lowercase
@@ -271,6 +333,7 @@ class EngineShortn(Engine):
         if selected!=None:
             b=selected.text
             b=self.appendables(b)
+            b=overarchinglanguage.decodingtooriginal(b)
             self.commit(b)
         self.cleareverything()
         return True
@@ -335,6 +398,8 @@ class EngineShortn(Engine):
         #mechanism for escape toggle. catches it and changes state
         if keyval==IBus.Escape and time.time()-self.escapeoverflow>0.3:
             self.escapetoggle= not self.escapetoggle
+            if self.current_input!="":
+                self.commit(overarchinglanguage.decodingtooriginal(self.current_input))
             self.cleareverything()
             self.escapeoverflow=time.time()
             return True
@@ -359,12 +424,16 @@ class EngineShortn(Engine):
         return self.do_inputchar(keyval)
     #after do_process_key_event and you know it's a regular key so what to do with it
     def do_inputchar(self, inputchar):
+        try:
+            inputchar=overarchinglanguage.encodingfromoriginal(inputchar)
+        except:
+            True
         #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
         if inputchar == IBus.space:
             if self.current_input!="":
                 rtr=self.appendables(self.current_input)
                 if rtr!=" " and rtr!=None:
-                    self.commit(str(rtr))
+                    self.commit(str(overarchinglanguage.decodingtooriginal(rtr)))
             else:
                 self.commit(str(" "))
             self.setcand()
@@ -393,10 +462,10 @@ class EngineShortn(Engine):
         except:
             True
         #if the inputchar is neither in latin alphabet nor a common punctuation then let it commit natively aka return false. so like #$% etc
-        if inputchar not in self.englishlistfilter and inputchar not in self.englishpunctuation:
+        if inputchar not in self.acceptedshortnenginecharacterlist and inputchar not in self.commonpunctuation:
             return False
         #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
-        if inputchar in self.englishpunctuation:
+        if inputchar in self.commonpunctuation:
             self.addpunc=inputchar
             if self.current_input==None or self.current_input=="":
                 self.commit(self.addpunc+" ")
@@ -409,7 +478,7 @@ class EngineShortn(Engine):
         ut=self.shortnenginefunction(self.current_input)
         if ut!=None and type(ut)==list and type(ut)!=None:
             self.setcand(thelist=ut)
-        self.showtext(self.current_input)
+        self.showtext(overarchinglanguage.decodingtooriginal(self.current_input))
         return True
 
         
