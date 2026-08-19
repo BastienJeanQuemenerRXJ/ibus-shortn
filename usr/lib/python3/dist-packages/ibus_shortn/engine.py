@@ -1,4 +1,12 @@
-
+# Copyright (c) 2012-2013 - The IBus Cangjie authors (https://gitlab.freedesktop.org/cangjie/ibus-cangjie/)
+# Copyright (c) 2026 - Bastien Jean Quemener <shortn@bastien.live>  (github.com/BastienJeanQuemerRXJ/ibus-shortn)
+#
+# This file is part of ibus-shortn, the IBus Shortn input method engine, forked from ibus-cangjie.
+#
+# ibus-shortn is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
 # ibus-shortn is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -7,7 +15,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ibus-shortn.  If not, see <http://www.gnu.org/licenses/>.
-
 
 
 
@@ -22,7 +29,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-"""
+
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -30,9 +37,6 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-"""
-
-
 
 #this defines how to handle the localization of languages in terms of shortn engine
 class language:
@@ -45,6 +49,30 @@ class language:
         self.encodedvowel = encodedvowel
         self.punctuation = punctuation
         self.dictionaryname = dictionaryname
+    def encoding(self, the,scheme):
+        a=""
+        for i in the:
+            try:
+                a+= self.originalalphabetuppercasetolowercase.get(i)
+            except:
+                a+=i
+        the=a
+        a=""
+        for i in the:
+            try:
+                a+= scheme.get(i)
+            except:
+                a+=i
+        return a
+    def decoding(self, the, scheme):
+        a=""
+        for i in the:
+            try:
+                a+= scheme.get(i)
+            except:
+                a+=i
+        return a
+        
 
 english=language(
     {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"},
@@ -56,50 +84,21 @@ english=language(
     {"?", "!", ".", ";", ","},
     "en-dic.json"
     )
-"""
-#it doesn't work because decodefrench is before french=language but still calls it. so make decodefrench and encodefrench inside french=language or add a slot for functions in the class language 
-#make encode like:"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"
-#turn this into a lambda and add it inside french=language shit
-frenchencode={"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}
-frenchdecode={"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}
-def encodefrench(the):
-    a=""
-    for i in the:
-        try:
-            k=french.originalalphabetuppercasetolowercase(i)
-        except:
-            k=i
-        a+=k
-    the=a
-    a=""
-    for i in the:
-        try:
-            k=frenchencode.get(i)
-        except:
-            k=i
-        a+=k
-    return a
-def decodefrench(the):
-    a=""
-    for i in the:
-        try:
-            k=frenchdecode.get(i)
-        except:
-            k=i
-        a+=k
-    return a          
-        
+
+
 french=language(
     {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ö", "ä", "ü", "ï", "ë", "ù", "è", "à", "ç", "ô", "â", "ê", "î", "û", "é", "'"},
     { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " ","ö":"Ö","ä":"Ä","ü":"Ü","ï":"Ï","ë":"Ë","ù":"Ù","è":"È","à":"À","ç":"Ç","ô":"Ô","â":"Â","ê":"Ê","î":"Î","û":"Û","é":"É" },
     {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " ", "Ö":"ö","Ä":"ä","Ü":"ü","Ï":"ï","Ë":"ë","Ù":"ù","È":"è","À":"à","Ç":"ç","Ô":"ô","Â":"â","Ê":"ê","Î":"î","Û":"û","É":"é"},
-    lambda x : encodefrench(x),
-    lambda x : decodefrench(x),
+    lambda x : french.encoding(x, {"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}),
+    lambda x : french.decoding(x, {"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}),
     {'a', 'e', 'i', 'o', 'u', 'y', "O", "A", "U", "I", "E", "Y", "R", "W", "C", "K", "S", "F", "V", "N", "M"},
     {"?", "!", ".", ";", ","},
-    "en-dic.json"
+    "fr-dic.json"
     )
-"""
+
+
+
 overarchinglanguage=english
 
 
@@ -314,7 +313,8 @@ class EngineShortn(Engine):
             else:
                 return self.do_select_candidate(a)
     #turns a normall lowercase word into the final product ie from 'hospital' to 'Hospital?' etc
-    def appendables(self,the):
+    def appendables(self,a):
+        the=a
         if the==" ":
             return " "
         if the=="":
@@ -322,7 +322,7 @@ class EngineShortn(Engine):
         if the==None:
             return None
         if self.capstoggle:
-            the=self.firstcap(the)
+            the=self.firstcap(overarchinglanguage.decodingtooriginal(the))
         if self.addpunc!=None:
             the+=self.addpunc
         return the+" "
@@ -424,10 +424,6 @@ class EngineShortn(Engine):
         return self.do_inputchar(keyval)
     #after do_process_key_event and you know it's a regular key so what to do with it
     def do_inputchar(self, inputchar):
-        try:
-            inputchar=overarchinglanguage.encodingfromoriginal(inputchar)
-        except:
-            True
         #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
         if inputchar == IBus.space:
             if self.current_input!="":
@@ -464,6 +460,11 @@ class EngineShortn(Engine):
         #if the inputchar is neither in latin alphabet nor a common punctuation then let it commit natively aka return false. so like #$% etc
         if inputchar not in self.acceptedshortnenginecharacterlist and inputchar not in self.commonpunctuation:
             return False
+        #converts into injective latin set
+        try:
+            inputchar=overarchinglanguage.encodingfromoriginal(inputchar)
+        except:
+            True
         #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
         if inputchar in self.commonpunctuation:
             self.addpunc=inputchar
