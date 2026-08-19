@@ -321,8 +321,9 @@ class EngineShortn(Engine):
             return ""
         if the==None:
             return None
+        the=overarchinglanguage.decodingtooriginal(the)
         if self.capstoggle:
-            the=self.firstcap(overarchinglanguage.decodingtooriginal(the))
+            the=self.firstcap(the)
         if self.addpunc!=None:
             the+=self.addpunc
         return the+" "
@@ -479,7 +480,7 @@ class EngineShortn(Engine):
         ut=self.shortnenginefunction(self.current_input)
         if ut!=None and type(ut)==list and type(ut)!=None:
             self.setcand(thelist=ut)
-        self.showtext(overarchinglanguage.decodingtooriginal(self.current_input))
+        self.showtext(self.current_input)
         return True
 
         
