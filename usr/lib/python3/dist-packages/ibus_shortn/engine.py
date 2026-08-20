@@ -29,7 +29,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-
+"""
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -37,7 +37,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-
+"""
 #this defines how to handle the localization of languages in terms of shortn engine
 class language:
     def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname):
@@ -148,7 +148,7 @@ class Engine(IBus.Engine):
         else:
             self.commit_text(inp)
     #self.current_showtext    this is the name of what's being shown in the editable text input
-    #shows you thestr in the edit window. keep in mind that what's shown is ran through appendables so for example if thestr=hosptl and capstoggle is on and addpunc is "," then what's shown is "Hosptl,". albeit be aware that shortnengine does NOT see "Hosptl," it will always only see "hosptl"
+    #shows you thestr in the edit window. keep in mind that what's shown is ran through appendables so for example if thestr=hosptl and shifttoggle is on and addpunc is "," then what's shown is "Hosptl,". albeit be aware that shortnengine does NOT see "Hosptl," it will always only see "hosptl"
     def showtext(self, thestr):
         thestr=self.appendables(thestr)
         text = IBus.Text.new_from_string(thestr)
@@ -322,7 +322,7 @@ class EngineShortn(Engine):
         if the==None:
             return None
         the=overarchinglanguage.decodingtooriginal(the)
-        if self.capstoggle:
+        if self.shifttoggle:
             the=self.firstcap(the)
         if self.addpunc!=None:
             the+=self.addpunc
@@ -336,7 +336,11 @@ class EngineShortn(Engine):
             b=self.appendables(b)
             b=overarchinglanguage.decodingtooriginal(b)
             self.commit(b)
+            self.shifttoggle=False
         self.cleareverything()
+        if self.capitalizeaftercommit==True:
+            self.shifttoggle=True
+            self.capitalizeaftercommit=False
         return True
     #called by ibus. ie you use your mouse to click on a candidate
     def do_candidate_clicked(self, index, button, state):
@@ -374,9 +378,9 @@ class EngineShortn(Engine):
     escapetoggle=True
     #sometimes the code needs an overflow variable. basically pressing one key once will have ibus interpret it as if you pressed it multiple times. these "overflow" variables are meant to prevent this. if a key is pressed multiple times under an interval lesser than 0.3 seconds it will only register it once
     escapeoverflow=time.time()
-    #same thing but for pressing caps lock
-    capstoggle=False
-    capsoverflow=time.time()
+    #same thing but for pressing shift
+    shifttoggle=False
+    shiftoverflow=time.time()
 
     #work in progress capitalize next word after dot pressed system
     """
@@ -386,11 +390,11 @@ class EngineShortn(Engine):
             self.dotcap="Triggered"
             return True
         elif self.dotcap=="Triggered" and info=="space, enter, word selected or commit":
-            self.capstoggle=True
+            self.shifttoggle=True
             self.dotcap="disablenext"
             return True
         elif self.disablenext=="On" and info=="space, enter, word selected or commit":
-            self.capstoggle=False
+            self.shifttoggle=False
             self.dotcap="Off"
     """
     #when you type ANY key what to do
@@ -407,23 +411,24 @@ class EngineShortn(Engine):
         #mechanism for escape toggle. if on, then return all false
         elif not self.escapetoggle:
             return False
-        #mechanism for caps lock system
-        elif keyval==IBus.Caps_Lock and time.time()-self.capsoverflow>0.3:
-            self.capstoggle=self.capstoggle==False
-            self.capsoverflow=time.time()
-            self.showtext(self.current_input)
-            return False
-        #if enter key pressed then commit it natively aka return false
-        elif keyval==IBus.KEY_Return:
-            return False
-        #im not sure 
+        #when you press something without releasing it doesnt count?? ithink? 
         elif (state & IBus.ModifierType.RELEASE_MASK):
             return False
         # Ignore Alt+<key> and Ctrl+<key>
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
             return False
+        #mechanism for shift system
+        if keyval==IBus.KEY_Shift_L and time.time()-self.shiftoverflow>0.3:
+            self.shifttoggle=self.shifttoggle==False
+            self.shiftoverflow=time.time()
+            self.showtext(self.current_input)
+            return False
+        #if enter key pressed then commit it natively aka return false
+        elif keyval==IBus.KEY_Return:
+            return False
         return self.do_inputchar(keyval)
     #after do_process_key_event and you know it's a regular key so what to do with it
+    capitalizeaftercommit=False
     def do_inputchar(self, inputchar):
         #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
         if inputchar == IBus.space:
@@ -433,8 +438,12 @@ class EngineShortn(Engine):
                     self.commit(str(overarchinglanguage.decodingtooriginal(rtr)))
             else:
                 self.commit(str(" "))
+            self.shifttoggle=False
             self.setcand()
             self.cleareverything()
+            if self.capitalizeaftercommit==True:
+                self.shifttoggle=True
+                self.capitalizeaftercommit=False
             return True
         
         elif inputchar == IBus.Page_Down:
@@ -468,6 +477,8 @@ class EngineShortn(Engine):
             True
         #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
         if inputchar in self.commonpunctuation:
+            if inputchar=="." or inputchar=="?" or inputchar=="?" or inputchar=="!":
+                self.capitalizeaftercommit=True
             self.addpunc=inputchar
             if self.current_input==None or self.current_input=="":
                 self.commit(self.addpunc+" ")
@@ -476,7 +487,7 @@ class EngineShortn(Engine):
         else:
             #if inputchar is not punctuation then append it to current_input
             self.update_current_input(append=inputchar)
-        #from current_input ask shortnengine for a list of suggestions. if list not empty then display it. then show the current_input. 
+        #from current_input ask shortnengine for a list of suggestions. if list not empty then display it. then show the current_input.
         ut=self.shortnenginefunction(self.current_input)
         if ut!=None and type(ut)==list and type(ut)!=None:
             self.setcand(thelist=ut)
