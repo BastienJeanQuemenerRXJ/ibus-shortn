@@ -40,7 +40,7 @@ def logwrite(the, e=0):
 """
 #this defines how to handle the localization of languages in terms of shortn engine
 class language:
-    def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname):
+    def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname, wordseparator):
         self.originalalphabet = originalalphabet  
         self.originalalphabetlowercasetouppercase = originalalphabetlowercasetouppercase
         self.originalalphabetuppercasetolowercase = originalalphabetuppercasetolowercase
@@ -49,6 +49,7 @@ class language:
         self.encodedvowel = encodedvowel
         self.punctuation = punctuation
         self.dictionaryname = dictionaryname
+        self.wordseparator=wordseparator
     def encoding(self, the,scheme):
         a=""
         for i in the:
@@ -82,7 +83,8 @@ english=language(
     lambda x:x,
     {'a', 'e', 'i', 'o', 'u', 'y'},
     {"?", "!", ".", ";", ","},
-    "en-dic.json"
+    "en.json",
+    {" ", "-", "_"}
     )
 
 
@@ -94,7 +96,8 @@ french=language(
     lambda x : french.decoding(x, {"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}),
     {'a', 'e', 'i', 'o', 'u', 'y', "O", "A", "U", "I", "E", "Y", "R", "W", "C", "K", "S", "F", "V", "N", "M"},
     {"?", "!", ".", ";", ","},
-    "fr-dic.json"
+    "fr.json",
+    {" ", "'", "_", "-"}
     )
 
 
@@ -313,7 +316,7 @@ class EngineShortn(Engine):
             else:
                 return self.do_select_candidate(a)
     #turns a normall lowercase word into the final product ie from 'hospital' to 'Hospital?' etc
-    def appendables(self,a):
+    def appendables(self,a, encodingchange=True):
         the=a
         if the==" ":
             return " "
@@ -321,20 +324,21 @@ class EngineShortn(Engine):
             return ""
         if the==None:
             return None
-        the=overarchinglanguage.decodingtooriginal(the)
+        if encodingchange:
+            the=overarchinglanguage.decodingtooriginal(the)
         if self.shifttoggle:
             the=self.firstcap(the)
         if self.addpunc!=None:
             the+=self.addpunc
-        return the+" "
+        return the
     #once you get 'index' aka number what you do to it aka you choose from the list and input it
     def do_select_candidate(self, index):
         page_index = self.lookuptable.get_cursor_pos()
         selected = self.lookuptable.get_candidate(page_index+index-1)
         if selected!=None:
             b=selected.text
-            b=self.appendables(b)
             b=overarchinglanguage.decodingtooriginal(b)
+            b=self.appendables(b,encodingchange=False)+" "
             self.commit(b)
             self.shifttoggle=False
         self.cleareverything()
@@ -381,22 +385,6 @@ class EngineShortn(Engine):
     #same thing but for pressing shift
     shifttoggle=False
     shiftoverflow=time.time()
-
-    #work in progress capitalize next word after dot pressed system
-    """
-    self.dotcap="Off"
-    def dotcap(self,info):
-        if self.dotcap=="Off" and info==". pressed":
-            self.dotcap="Triggered"
-            return True
-        elif self.dotcap=="Triggered" and info=="space, enter, word selected or commit":
-            self.shifttoggle=True
-            self.dotcap="disablenext"
-            return True
-        elif self.disablenext=="On" and info=="space, enter, word selected or commit":
-            self.shifttoggle=False
-            self.dotcap="Off"
-    """
     #when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
         #if theres some issue with a user pressing keys too fast like return then delete and it not registering then change all elif to if 
@@ -431,13 +419,15 @@ class EngineShortn(Engine):
     capitalizeaftercommit=False
     def do_inputchar(self, inputchar):
         #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
-        if inputchar == IBus.space:
+        if IBus.keyval_to_unicode(inputchar) in overarchinglanguage.wordseparator:
+            inputchar = IBus.keyval_to_unicode(inputchar)
             if self.current_input!="":
-                rtr=self.appendables(self.current_input)
-                if rtr!=" " and rtr!=None:
-                    self.commit(str(overarchinglanguage.decodingtooriginal(rtr)))
+                rtr=overarchinglanguage.decodingtooriginal(self.current_input)
+                rtr=self.appendables(rtr, encodingchange=False)
+                if rtr!=inputchar and rtr!=None:
+                    self.commit(str(rtr)+str(inputchar))
             else:
-                self.commit(str(" "))
+                self.commit(inputchar)
             self.shifttoggle=False
             self.setcand()
             self.cleareverything()
@@ -445,7 +435,6 @@ class EngineShortn(Engine):
                 self.shifttoggle=True
                 self.capitalizeaftercommit=False
             return True
-        
         elif inputchar == IBus.Page_Down:
             return self.do_page_down()
         elif inputchar == IBus.Page_Up:
