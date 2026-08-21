@@ -20,7 +20,7 @@
 
 
 #this is how many shortn engines (ie english french russian etc) there can be so add them here and then also the other places
-__all__ = ["EngineShortn" ,"EngineShortnfr"]
+__all__ = ["EngineShortn"]
 import time
 import gettext
 from operator import attrgetter
@@ -38,6 +38,8 @@ def logwrite(the, e=0):
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
 """
+overarchinglanguage=english
+#french, russian
 #this defines how to handle the localization of languages in terms of shortn engine
 class language:
     def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname, wordseparator):
@@ -102,7 +104,6 @@ french=language(
 
 
 
-overarchinglanguage=english
 
 
 
