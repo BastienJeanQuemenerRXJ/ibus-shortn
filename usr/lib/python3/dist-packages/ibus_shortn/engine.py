@@ -38,7 +38,6 @@ def logwrite(the, e=0):
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
 """
-overarchinglanguage=english
 #french, russian
 #this defines how to handle the localization of languages in terms of shortn engine
 class language:
@@ -102,6 +101,7 @@ french=language(
     {" ", "'", "_", "-"}
     )
 
+overarchinglanguage=english
 
 
 
