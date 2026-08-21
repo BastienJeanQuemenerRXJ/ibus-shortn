@@ -9,11 +9,15 @@ For example, to type "humanity", you would type "humnt". You would see two resul
 * "humanity "
 vs
 * "humnt2"
-(the added space feature can be disabled)
 
+
+# languages 
+An easy way to switch between engines is easily doable but not yet finished. Coming soon
+* Now fully functional in traditional-canadian-qwerty French keyboard! azerty configuration coming soon, and video coming soon. 
+* Russian is almost ready.
 # Commands
 * pressing 'esc' disables the engine, thereby letting you type normally. repressing it enables it again. keep in mind that pressing 'esc' does not actually unload anything, the engine and dictionary are still running and active. in case of a bug, do ```pkill ibus``` which will disable all ibus IMEs but keep you with non-IME IBus keyboards (russian, french, english, etc). 
-* caps lock makes it such that the first letter of your word will be capitalized
+* pressing left shift makes it such that the first letter of your word will be capitalized. right shift functions normally (ie pressing right shift +1 makes ! but right shift +a still makes a)
 * pressing ',.;: before validating your word will add it before your word and then add a space.  ie,  typing "humnty,1" will give "humanity, "
 * to add words to the dictionary, do (this is extremely clunky but it works on debian. will fix later idk)
 ```cd && sudo rm -rf ibus-shortn && sudo git clone https://github.com/BastienJeanQuemenerRXJ/ibus-shortn.git && cd ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn && sudo nano custom-words.txt && sudo python3 english-make-dict.py && cd && cd ibus-shortn/ && sudo bash -c "find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; > DEBIAN/md5sums" && cd .. && sudo dpkg-deb --root-owner-group --build ibus-shortn && sudo dpkg -i ibus-shortn.deb && ibus restart```

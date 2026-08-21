@@ -20,7 +20,7 @@
 
 
 #this is how many shortn engines (ie english french russian etc) there can be so add them here and then also the other places
-__all__ = ["EngineShortn"]
+__all__ = ["EngineShortn" ,"EngineShortnfr"]
 import time
 import gettext
 from operator import attrgetter
