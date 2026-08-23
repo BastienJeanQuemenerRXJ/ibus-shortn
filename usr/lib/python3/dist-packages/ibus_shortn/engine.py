@@ -38,8 +38,8 @@ def logwrite(the, e=0):
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
 """
-#french, russian
 #this defines how to handle the localization of languages in terms of shortn engine
+#yes, it's better to convert every non basic latin unicode character into a basic latin character by using upper case basic latin (ie a:a, é:A) because it massively helps on dictionary size and reduces encodign issues
 class language:
     def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname, wordseparator):
         self.originalalphabet = originalalphabet  
@@ -101,9 +101,9 @@ french=language(
     {" ", "'", "_", "-"}
     )
 
-overarchinglanguage=english
 
 
+overarchinglanguage=french
 
 
 
@@ -467,12 +467,17 @@ class EngineShortn(Engine):
             True
         #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
         if inputchar in self.commonpunctuation:
-            if inputchar=="." or inputchar=="?" or inputchar=="?" or inputchar=="!":
+            if inputchar=="." or inputchar=="?" or inputchar=="!":
                 self.capitalizeaftercommit=True
             self.addpunc=inputchar
+            #if you type a character in the list of common punctuation and curent input is empty then cleareverything and then capitalize 
             if self.current_input==None or self.current_input=="":
                 self.commit(self.addpunc+" ")
-                self.cleareverything()
+                self.addpunc=None
+                self.cleareverything
+                if inputchar=="." or inputchar=="?" or inputchar=="!":
+                    self.shifttoggle=True
+                    self.capitalizeaftercommit=False
                 return True
         else:
             #if inputchar is not punctuation then append it to current_input
@@ -484,4 +489,4 @@ class EngineShortn(Engine):
         self.showtext(self.current_input)
         return True
 
-        
+           
