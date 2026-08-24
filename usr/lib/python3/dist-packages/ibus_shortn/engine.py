@@ -110,7 +110,6 @@ class Engine(IBus.Engine):
     """The base class for Shortn engines."""
     def __init__(self):
         classname = self.__name__
-        logwrite(classname)
         self.overarchinglanguage= en if classname == "shortn" else langlist.get(classname[6:], en)
         self.dic=self.loaddic()
         super(Engine, self).__init__()
