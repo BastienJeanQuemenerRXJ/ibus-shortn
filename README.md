@@ -1,4 +1,6 @@
 # ibus-shortn
+A deterministic IME to type faster in alphabetic-using languages containing on average more consonants than vowels per word. gplv3, Forked from ibus-cangjie
+
 
 https://github.com/user-attachments/assets/6dd0051c-056c-4096-b4c7-c2123ab6a111
 
