@@ -42,6 +42,7 @@ from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
 """
+import getattr
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -129,11 +130,9 @@ fr=language(
 langlist={"fr":fr, "en":en}
 
 
-#i feel that it's ugly that is_inputnumber isn't inside class engine but whatever
-#Is the `keyval` param a numeric input, e.g to select a candidate.
-def is_inputnumber(keyval):
-    return ((keyval in range(getattr(IBus, "0"), getattr(IBus, "9")+1)) or
-            (keyval in range(IBus.KP_0, IBus.KP_9+1)))
+
+
+
 class Engine(IBus.Engine):
     """The base class for Shortn engines."""
     def __init__(self):
@@ -174,8 +173,7 @@ class Engine(IBus.Engine):
             with open(curdic,'r') as dic:
                 return json.load(dic)
         except Exception as err:
-            errc= getattr(err, 'message', repr(err))
-            #logwrite("dicloading failed because of"+errc)
+            #logwrite("dicloading failed because of"+err, e=1)
             return {"json":["failed"]}
     #commits inp (string) as final output. if ibusencode==False then it assumes inp is already converted into ibus encode. if you want to deconvert something from ibus encode to text, then you can do inp.text
     #it is necessary for what is being committed to be in ibus encode in the end
@@ -460,7 +458,7 @@ class EngineShortn(Engine):
             self.showtext(self.current_input)
             return True
         #if the thing is a number then treat it like selecting candidate thingie index
-        elif is_inputnumber(inputchar):
+        elif IBus.keyval_to_unicode(inputchar) in {"1","2","3","4","5","6","7","8","9","0"}:
             return self.do_number(inputchar)
         inputchar = IBus.keyval_to_unicode(inputchar)
         #turns the current_input into lowercase. necessary for shortn_engine
