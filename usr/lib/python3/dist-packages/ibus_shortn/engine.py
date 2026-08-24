@@ -394,12 +394,14 @@ class EngineShortn(Engine):
     #same thing but for pressing shift
     shifttoggle=False
     
+    
     #when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
         #mechanism for escape toggle. catches it and changes state
         #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
+        
         if keyval==IBus.Escape:
             self.escapetoggle= not self.escapetoggle
             if self.current_input!="":
@@ -409,9 +411,6 @@ class EngineShortn(Engine):
         #mechanism for escape toggle. if on, then return all false
         elif not self.escapetoggle:
             return False
-        #when you press something without releasing it doesnt count?? ithink? 
-        elif (state & IBus.ModifierType.RELEASE_MASK):
-            return False
         # Ignore Alt+<key> and Ctrl+<key>
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
             return False
@@ -419,7 +418,7 @@ class EngineShortn(Engine):
         if keyval==IBus.KEY_Shift_L:
             self.shifttoggle=self.shifttoggle==False
             self.showtext(self.current_input)
-            return False
+            return True
         #if enter key pressed then commit it natively aka return false
         elif keyval==IBus.KEY_Return:
             return False
