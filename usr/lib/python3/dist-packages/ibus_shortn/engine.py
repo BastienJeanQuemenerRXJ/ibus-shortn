@@ -65,7 +65,7 @@ def logwrite(the, e=0):
 #shows you éducation
 #if you have caps or something it will only apply caps thing at the end. (ie appendables)
 #again. this is actually better. without this, dictionary size rises to astronomical levels (iirc russian dictionary size rises to 80mb instead of, now, 8mb) just make sure your new encoded latin set is injective (no collisions)
-
+#again, even if you wanted to remove it, python3 has problems reading large json files with accents. so it would literally not work
 class language:
     def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname, wordseparator):
         #list of what the user types and it's recognized. 
@@ -114,7 +114,7 @@ en=language(
     "en.json",
     {" ", "-", "_"}
     )
-
+#english doesnt need a remapping because it doesn't have accents (basic latin)
 
 fr=language(
     {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ö", "ä", "ü", "ï", "ë", "ù", "è", "à", "ç", "ô", "â", "ê", "î", "û", "é", "'"},
