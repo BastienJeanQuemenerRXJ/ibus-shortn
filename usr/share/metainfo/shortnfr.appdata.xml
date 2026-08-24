@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="inputmethod">
+  <id>shortnfr.xml</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Shortnfr</name>
+  <summary>Shortnfr input method</summary>
+  <summary xml:lang="fr">Méthode d'écriture Raccrcr (Shortn)</summary>
+  <description>
+    <p>Shortn for French</p>
+    <p xml:lang="fr">Raccrcr en français</p>
+  </description>
+  <url type="homepage">https://github.com/BastienJeanQuemerRXJ/ibus-shortn/</url>
+  <update_contact>shortn@bastien.live</update_contact>
+</component>
+
+

@@ -12,9 +12,9 @@ vs
 
 
 # languages 
-An easy way to switch between engines is easily doable but not yet finished. Coming soon
-* Now fully functional in traditional-canadian-qwerty French keyboard! azerty configuration coming soon, and video coming soon. 
+* Fully functional in French (traditional-canadian-qwerty keyboard, better azerty configuration coming soon). Video coming soon. 
 * Russian is almost ready.
+* Spanish, German are planned
 # Commands
 * pressing 'esc' disables the engine, thereby letting you type normally. repressing it enables it again. keep in mind that pressing 'esc' does not actually unload anything, the engine and dictionary are still running and active. in case of a bug, do ```pkill ibus``` which will disable all ibus IMEs but keep you with non-IME IBus keyboards (russian, french, english, etc). 
 * pressing left shift makes it such that the first letter of your word will be capitalized. right shift functions normally (ie pressing right shift +1 makes ! but right shift +a still makes a)
@@ -42,7 +42,7 @@ Setting up:
 
 * debian:
 
-To launch it you can either do ```ibus engine shortn``` to launch it from the terminal, or, more natively, go to ubuntu settings, keyboard, add language, go to 'English-US', select 'shortn'. 
+To launch it you can either do ```ibus engine shortn[languagecode, if english then just write shortn]``` to launch it from the terminal, or, more natively, go to ubuntu settings, keyboard, add language, go to 'English-US', select 'shortn',  for french go to 'French-FR', select 'raccrcr' or 'shortnfr' or 'shortn'
 
 will add fedora and arch soon
 

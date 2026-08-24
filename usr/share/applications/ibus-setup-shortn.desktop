@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+# The title of the preferences window for Shortnfr
+Name=Réglages de Raccrcr (Shortn)
+Name[fr_CA]=Réglages de Raccrcr (Shortn)
+Name[fr]=Réglages de Raccrcr (Shortn)
+# Tooltip for the preferences app for Quick
+Comment=Paramétrer les réglages de Raccrcr
+Comment[fr]=Paramétrer les réglages de Raccrcr
+Comment[fr_CA]=Paramétrer les réglages de Raccrcr
+Exec=/usr/bin/ibus-setup-shortn shortnfr
+Icon=ibus-setup-shortn
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Settings;
+NotShowIn=GNOME;

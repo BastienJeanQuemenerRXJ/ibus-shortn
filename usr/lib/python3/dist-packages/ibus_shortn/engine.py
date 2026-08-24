@@ -20,7 +20,8 @@
 
 
 #this is how many shortn engines (ie english french russian etc) there can be so add them here and then also the other places
-__all__ = ["EngineShortn"]
+__all__ = ["EngineShortn", "EngineShortnfr"]
+
 import time
 import gettext
 from operator import attrgetter
@@ -54,29 +55,20 @@ class language:
     def encoding(self, the,scheme):
         a=""
         for i in the:
-            try:
-                a+= self.originalalphabetuppercasetolowercase.get(i)
-            except:
-                a+=i
+            a+= self.originalalphabetuppercasetolowercase.get(i,i)
         the=a
         a=""
         for i in the:
-            try:
-                a+= scheme.get(i)
-            except:
-                a+=i
+            a+= scheme.get(i,i)
         return a
     def decoding(self, the, scheme):
         a=""
         for i in the:
-            try:
-                a+= scheme.get(i)
-            except:
-                a+=i
+            a+= scheme.get(i,i)
         return a
         
 
-english=language(
+en=language(
     {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"},
     { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " "},
     {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " "},
@@ -89,36 +81,38 @@ english=language(
     )
 
 
-french=language(
+fr=language(
     {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ö", "ä", "ü", "ï", "ë", "ù", "è", "à", "ç", "ô", "â", "ê", "î", "û", "é", "'"},
     { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " ","ö":"Ö","ä":"Ä","ü":"Ü","ï":"Ï","ë":"Ë","ù":"Ù","è":"È","à":"À","ç":"Ç","ô":"Ô","â":"Â","ê":"Ê","î":"Î","û":"Û","é":"É" },
     {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " ", "Ö":"ö","Ä":"ä","Ü":"ü","Ï":"ï","Ë":"ë","Ù":"ù","È":"è","À":"à","Ç":"ç","Ô":"ô","Â":"â","Ê":"ê","Î":"î","Û":"û","É":"é"},
-    lambda x : french.encoding(x, {"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}),
-    lambda x : french.decoding(x, {"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}),
+    lambda x : fr.encoding(x, {"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}),
+    lambda x : fr.decoding(x, {"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}),
     {'a', 'e', 'i', 'o', 'u', 'y', "O", "A", "U", "I", "E", "Y", "R", "W", "C", "K", "S", "F", "V", "N", "M"},
     {"?", "!", ".", ";", ","},
     "fr.json",
     {" ", "'", "_", "-"}
     )
+langlist={"fr":fr, "en":en}
 
 
 
-overarchinglanguage=french
-
-
+#try to replace multiple line if statements by one line if statements
+#if age >= 18: print("Adult")
+#and
+#status = "Adult" if age >= 18 else "Minor"
 
 #i feel that it's ugly that is_inputnumber isn't inside class engine but whatever
 #Is the `keyval` param a numeric input, e.g to select a candidate.
 def is_inputnumber(keyval):
     return ((keyval in range(getattr(IBus, "0"), getattr(IBus, "9")+1)) or
             (keyval in range(IBus.KP_0, IBus.KP_9+1)))
-
-
 class Engine(IBus.Engine):
     """The base class for Shortn engines."""
     def __init__(self):
+        classname = self.__name__
+        logwrite(classname)
+        self.overarchinglanguage= en if classname == "shortn" else langlist.get(classname[6:], en)
         self.dic=self.loaddic()
-        thename=self.__name__
         super(Engine, self).__init__()
         schema_id = "org.shortn-scheme.ibus.%s" % self.__name__
         self.settings = Gio.Settings(schema_id=schema_id)
@@ -132,8 +126,23 @@ class Engine(IBus.Engine):
         self.lookuptable.set_orientation(IBus.Orientation.HORIZONTAL)
         self.init_properties()
         self.init_shortn()
+        #list of vowels
+        self.vowels=self.overarchinglanguage.encodedvowel
+        #every character that shortn accepts as inputtable to the engine
+        self.acceptedshortnenginecharacterlist=self.overarchinglanguage.originalalphabet
+        #appendable things to characters
+        self.commonpunctuation=self.overarchinglanguage.punctuation
+        #turn lowercase to uppercase
+        self.capital=self.overarchinglanguage.originalalphabetlowercasetouppercase
+        #turn uppercase to lowercase
+        self.nocaplist=self.overarchinglanguage.originalalphabetuppercasetolowercase
+        #punctuation variable
+        self.addpunc=None
+        #turns a word into all lowercase
+
     #loads dictionary. call it only once. the dictionary stays loaded. to call it. self.dic. 
-    def loaddic(self,curdic="/usr/lib/python3/dist-packages/ibus_shortn/"+overarchinglanguage.dictionaryname):
+    def loaddic(self,curdic=None):
+        curdic="/usr/lib/python3/dist-packages/ibus_shortn/"+self.overarchinglanguage.dictionaryname if curdic==None else curdic
         try:
             import json
             with open(curdic,'r') as dic:
@@ -175,11 +184,12 @@ class Engine(IBus.Engine):
         if thelist!=None:
             num_candidates = 0
             for c in thelist:
-                abcd=overarchinglanguage.decodingtooriginal(c)
+                abcd=self.overarchinglanguage.decodingtooriginal(c)
                 self.lookuptable.append_candidate(IBus.Text.new_from_string(abcd))
                 num_candidates += 1
         self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
     def init_properties(self):
+        #this thing was here before multilanguage but now makes it crash pls fix it 
         self.prop_list = IBus.PropList()
         for (key, label) in (("halfwidth-chars", gettext.dgettext("ibus-shortn", "Half-Width Characters")),):
             stored_value = self.settings.get_boolean(key)
@@ -188,9 +198,8 @@ class Engine(IBus.Engine):
                 # Try the new constructor from IBus >= 1.5
                 prop = IBus.Property(key=key, prop_type=IBus.PropType.TOGGLE, label=label, icon='', sensitive=True, visible=True, state=state, sub_props=None)
             except TypeError:
-                # IBus 1.4.x didn't have the GI overrides for the nice
-                # constructor, so let's do it the old, non-pythonic way.
-                #   IBus.Property.new(key, type, label, icon, tooltip, sensitive, visible, state, sub_props)
+                # IBus 1.4.x didn't have the GI overrides for the nice constructor, so let's do it the old, non-pythonic way.
+                #IBus.Property.new(key, type, label, icon, tooltip, sensitive, visible, state, sub_props)
                 prop = IBus.Property.new(key, IBus.PropType.TOGGLE, IBus.Text.new_from_string(label), '', IBus.Text.new_from_string(''), True, True, state, None)
             self.prop_list.append(prop)
     #i think this is important
@@ -221,7 +230,6 @@ class Engine(IBus.Engine):
         #Present the next page of candidates. However, if there isn't any current input, then we shouldn't try to do anything at all, so that the key can fulfill its original function.
         if not self.lookuptable.get_number_of_candidates():
             return False
-
         self.lookuptable.page_down()
         self.setcand(tables=True)
         self.showtext(self.current_showtext)
@@ -264,26 +272,10 @@ class EngineShortn(Engine):
     """The English Shortn engine."""
     __gtype_name__ = "EngineShortn"
     __name__ = "shortn"
-    #list of vowels
-    vowels=overarchinglanguage.encodedvowel
-    #every character that shortn accepts as inputtable to the engine
-    acceptedshortnenginecharacterlist=overarchinglanguage.originalalphabet
-    #appendable things to characters
-    commonpunctuation=overarchinglanguage.punctuation
-    #turn lowercase to uppercase
-    capital=overarchinglanguage.originalalphabetlowercasetouppercase
-    #turn uppercase to lowercase
-    nocaplist=overarchinglanguage.originalalphabetuppercasetolowercase
-    #punctuation variable
-    addpunc=None
-    #turns a word into all lowercase
     def nocap(self, the):
         a=""
         for i in the:
-            try:
-                a+=self.nocaplist.get(i)
-            except:
-                a+=i
+            a+=self.nocaplist.get(i,i)
         return a
     #turns a word into all lowercase except first letter that is uppercase
     def firstcap(self, the):
@@ -294,14 +286,8 @@ class EngineShortn(Engine):
         except:
             True
         if len(the)==1:
-            the=self.capital.get(the)
-            return the
-        try:
-            a=self.capital.get(the[:1])
-        except:
-            a=the[:1]
-        the=str(str(a)+str(the[1:]))
-        return the
+            return self.capital.get(the)
+        return str(str(self.capital.get(the[:1],the[:1]))+str(the[1:]))
     #turns a word into all uppercase
     def allcap(self,the):
         a=""
@@ -321,12 +307,12 @@ class EngineShortn(Engine):
         the=a
         if the==" ":
             return " "
-        if the=="":
+        elif the=="":
             return ""
-        if the==None:
+        elif the==None:
             return None
         if encodingchange:
-            the=overarchinglanguage.decodingtooriginal(the)
+            the=self.overarchinglanguage.decodingtooriginal(the)
         if self.shifttoggle:
             the=self.firstcap(the)
         if self.addpunc!=None:
@@ -338,7 +324,7 @@ class EngineShortn(Engine):
         selected = self.lookuptable.get_candidate(page_index+index-1)
         if selected!=None:
             b=selected.text
-            b=overarchinglanguage.decodingtooriginal(b)
+            b=self.overarchinglanguage.decodingtooriginal(b)
             b=self.appendables(b,encodingchange=False)+" "
             self.commit(b)
             self.shifttoggle=False
@@ -393,7 +379,7 @@ class EngineShortn(Engine):
         if keyval==IBus.Escape and time.time()-self.escapeoverflow>0.3:
             self.escapetoggle= not self.escapetoggle
             if self.current_input!="":
-                self.commit(overarchinglanguage.decodingtooriginal(self.current_input))
+                self.commit(self.overarchinglanguage.decodingtooriginal(self.current_input))
             self.cleareverything()
             self.escapeoverflow=time.time()
             return True
@@ -420,10 +406,10 @@ class EngineShortn(Engine):
     capitalizeaftercommit=False
     def do_inputchar(self, inputchar):
         #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
-        if IBus.keyval_to_unicode(inputchar) in overarchinglanguage.wordseparator:
+        if IBus.keyval_to_unicode(inputchar) in self.overarchinglanguage.wordseparator:
             inputchar = IBus.keyval_to_unicode(inputchar)
             if self.current_input!="":
-                rtr=overarchinglanguage.decodingtooriginal(self.current_input)
+                rtr=self.overarchinglanguage.decodingtooriginal(self.current_input)
                 rtr=self.appendables(rtr, encodingchange=False)
                 if rtr!=inputchar and rtr!=None:
                     self.commit(str(rtr)+str(inputchar))
@@ -462,7 +448,7 @@ class EngineShortn(Engine):
             return False
         #converts into injective latin set
         try:
-            inputchar=overarchinglanguage.encodingfromoriginal(inputchar)
+            inputchar=self.overarchinglanguage.encodingfromoriginal(inputchar)
         except:
             True
         #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
@@ -489,4 +475,210 @@ class EngineShortn(Engine):
         self.showtext(self.current_input)
         return True
 
-           
+
+class EngineShortnfr(Engine):
+    #The Shortn FR engine.
+    __gtype_name__ = "EngineShortnfr"
+    __name__ = "shortnfr"
+    def nocap(self,the):
+        a=""
+        for i in the:
+            a+=self.nocaplist.get(i,i)
+        return a
+    #turns a word into all lowercase except first letter that is uppercase
+    def firstcap(self, the):
+        if the==None:
+            return True
+        try:
+            the=self.nocap(the)
+        except:
+            True
+        if len(the)==1:
+            return self.capital.get(the)
+        return str(str(self.capital.get(the[:1],the[:1]))+str(the[1:]))
+    #turns a word into all uppercase
+    def allcap(self,the):
+        a=""
+        for i in the:
+            a+=self.capital.get(i)
+        return a
+    #what to do when engine sees you typed a number
+    def do_number(self, keyval):
+        if self.lookuptable.get_number_of_candidates():
+            a=int(IBus.keyval_to_unicode(keyval))
+            if a==0:
+                return False
+            else:
+                return self.do_select_candidate(a)
+    #turns a normall lowercase word into the final product ie from 'hospital' to 'Hospital?' etc
+    def appendables(self,a, encodingchange=True):
+        the=a
+        if the==" ":
+            return " "
+        elif the=="":
+            return ""
+        elif the==None:
+            return None
+        if encodingchange:
+            the=self.overarchinglanguage.decodingtooriginal(the)
+        if self.shifttoggle:
+            the=self.firstcap(the)
+        if self.addpunc!=None:
+            the+=self.addpunc
+        return the
+    #once you get 'index' aka number what you do to it aka you choose from the list and input it
+    def do_select_candidate(self, index):
+        page_index = self.lookuptable.get_cursor_pos()
+        selected = self.lookuptable.get_candidate(page_index+index-1)
+        if selected!=None:
+            b=selected.text
+            b=self.overarchinglanguage.decodingtooriginal(b)
+            b=self.appendables(b,encodingchange=False)+" "
+            self.commit(b)
+            self.shifttoggle=False
+        self.cleareverything()
+        if self.capitalizeaftercommit==True:
+            self.shifttoggle=True
+            self.capitalizeaftercommit=False
+        return True
+    #called by ibus. ie you use your mouse to click on a candidate
+    def do_candidate_clicked(self, index, button, state):
+        self.do_select_candidate(index+1)
+    #from a word you get the last vowel aka type "hosptla" you get "a"
+    def getlastvowel(self, inpp):
+        inp=inpp
+        a=[i for i in inp if i in self.vowels]
+        if len(a)>1:
+            return a[-1]
+        else:
+            return None
+    #the main engine function. type "hosptl" and get "hospital"
+    def shortnenginefunction(self, theinputt):
+        theinput=theinputt
+        a=self.getlastvowel(theinput)
+        if a!=None:
+            theinput=theinput[:-1]
+        try:
+            sug= self.dic.get(theinput)
+        except:
+            return None
+        if a!=None:
+            if type(sug)==list:
+                b= [i for i in sug if self.getlastvowel(i)==a]
+            else:
+                return None
+            if len(b)==0:
+                return None
+            else:
+                return b
+        else:
+            return sug
+    #when you press esc it "disables" the engine. these are its variables for that
+    escapetoggle=True
+    #sometimes the code needs an overflow variable. basically pressing one key once will have ibus interpret it as if you pressed it multiple times. these "overflow" variables are meant to prevent this. if a key is pressed multiple times under an interval lesser than 0.3 seconds it will only register it once
+    escapeoverflow=time.time()
+    #same thing but for pressing shift
+    shifttoggle=False
+    shiftoverflow=time.time()
+    #when you type ANY key what to do
+    def do_process_key_event(self, keyval, keycode, state):
+        #if theres some issue with a user pressing keys too fast like return then delete and it not registering then change all elif to if 
+        #mechanism for escape toggle. catches it and changes state
+        if keyval==IBus.Escape and time.time()-self.escapeoverflow>0.3:
+            self.escapetoggle= not self.escapetoggle
+            if self.current_input!="":
+                self.commit(self.overarchinglanguage.decodingtooriginal(self.current_input))
+            self.cleareverything()
+            self.escapeoverflow=time.time()
+            return True
+        #mechanism for escape toggle. if on, then return all false
+        elif not self.escapetoggle:
+            return False
+        #when you press something without releasing it doesnt count?? ithink? 
+        elif (state & IBus.ModifierType.RELEASE_MASK):
+            return False
+        # Ignore Alt+<key> and Ctrl+<key>
+        elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
+            return False
+        #mechanism for shift system
+        if keyval==IBus.KEY_Shift_L and time.time()-self.shiftoverflow>0.3:
+            self.shifttoggle=self.shifttoggle==False
+            self.shiftoverflow=time.time()
+            self.showtext(self.current_input)
+            return False
+        #if enter key pressed then commit it natively aka return false
+        elif keyval==IBus.KEY_Return:
+            return False
+        return self.do_inputchar(keyval)
+    #after do_process_key_event and you know it's a regular key so what to do with it
+    capitalizeaftercommit=False
+    def do_inputchar(self, inputchar):
+        #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
+        if IBus.keyval_to_unicode(inputchar) in self.overarchinglanguage.wordseparator:
+            inputchar = IBus.keyval_to_unicode(inputchar)
+            if self.current_input!="":
+                rtr=self.overarchinglanguage.decodingtooriginal(self.current_input)
+                rtr=self.appendables(rtr, encodingchange=False)
+                if rtr!=inputchar and rtr!=None:
+                    self.commit(str(rtr)+str(inputchar))
+            else:
+                self.commit(inputchar)
+            self.shifttoggle=False
+            self.setcand()
+            self.cleareverything()
+            if self.capitalizeaftercommit==True:
+                self.shifttoggle=True
+                self.capitalizeaftercommit=False
+            return True
+        elif inputchar == IBus.Page_Down:
+            return self.do_page_down()
+        elif inputchar == IBus.Page_Up:
+            return self.do_page_up()
+        #if you press delete then either current current_input removes one letter, if current_input not exist then return false so deletes in the "real world"
+        elif inputchar == IBus.BackSpace:
+            if not self.current_input:
+                return False
+            self.update_current_input(drop=1)
+            self.setcand(self.shortnenginefunction(self.current_input))
+            self.showtext(self.current_input)
+            return True
+        #if the thing is a number then treat it like selecting candidate thingie index
+        elif is_inputnumber(inputchar):
+            return self.do_number(inputchar)
+        inputchar = IBus.keyval_to_unicode(inputchar)
+        #turns the current_input into lowercase. necessary for shortn_engine
+        try:
+            inputchar=self.nocap(inputchar)
+        except:
+            True
+        #if the inputchar is neither in latin alphabet nor a common punctuation then let it commit natively aka return false. so like #$% etc
+        if inputchar not in self.acceptedshortnenginecharacterlist and inputchar not in self.commonpunctuation:
+            return False
+        #converts into injective latin set
+        try:
+            inputchar=self.overarchinglanguage.encodingfromoriginal(inputchar)
+        except:
+            True
+        #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
+        if inputchar in self.commonpunctuation:
+            if inputchar=="." or inputchar=="?" or inputchar=="!":
+                self.capitalizeaftercommit=True
+            self.addpunc=inputchar
+            #if you type a character in the list of common punctuation and curent input is empty then cleareverything and then capitalize 
+            if self.current_input==None or self.current_input=="":
+                self.commit(self.addpunc+" ")
+                self.addpunc=None
+                self.cleareverything
+                if inputchar=="." or inputchar=="?" or inputchar=="!":
+                    self.shifttoggle=True
+                    self.capitalizeaftercommit=False
+                return True
+        else:
+            #if inputchar is not punctuation then append it to current_input
+            self.update_current_input(append=inputchar)
+        #from current_input ask shortnengine for a list of suggestions. if list not empty then display it. then show the current_input.
+        ut=self.shortnenginefunction(self.current_input)
+        if ut!=None and type(ut)==list and type(ut)!=None:
+            self.setcand(thelist=ut)
+        self.showtext(self.current_input)
+        return True

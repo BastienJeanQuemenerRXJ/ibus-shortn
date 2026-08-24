@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <name>org.freedesktop.IBus.shortnfr</name>
+  <description>Shortnfr Component</description>
+  <exec>/usr/libexec/ibus-engine-shortn --ibus shortnfr</exec>
+  <version>2.4</version>
+  <author>Bastien Jean Quemener</author>
+  <license>GPLv3+</license>
+  <homepage>https://github.com/BastienJeanQuemenerRXJ/ibus-shortn</homepage>
+  <textdomain>ibus-shortn</textdomain>
+
+  <engines>
+    <engine>
+      <name>shortnfr</name>
+      <longname>Shortnfr</longname>
+      <description>Shortnfr Input Method</description>
+      <language>fr</language>
+      <layout>default</layout>
+      <symbol>Raccrcr</symbol>
+      <icon>/usr/share/icons/hicolor/16x16/intl/shortn.png</icon>
+      <license>GPLv3+</license>
+      <author>The IBus Shortn authors</author>
+      <setup>/usr/bin/ibus-setup-shortn shortnfr</setup>
+      <rank>0</rank>
+    </engine>
+  </engines>
+</component>
