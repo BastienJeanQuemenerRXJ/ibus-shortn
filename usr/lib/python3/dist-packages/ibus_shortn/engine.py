@@ -457,10 +457,14 @@ class EngineShortn(Engine):
             self.setcand(self.shortnenginefunction(self.current_input))
             self.showtext(self.current_input)
             return True
-        #if the thing is a number then treat it like selecting candidate thingie index
-        elif IBus.keyval_to_unicode(inputchar) in {"1","2","3","4","5","6","7","8","9","0"}:
-            return self.do_number(inputchar)
-        inputchar = IBus.keyval_to_unicode(inputchar)
+        #turns inputchar from an ibus text to a regular text
+        inputchar=IBus.keyval_to_unicode(inputchar)
+        #if the thing is a number then treat it like selecting candidate index
+        try:
+            a=int(inputchar)
+            return self.do_number(a)
+        except:
+            True
         #turns the current_input into lowercase. necessary for shortn_engine
         try:
             inputchar=self.nocap(inputchar)
