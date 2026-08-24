@@ -321,11 +321,11 @@ class EngineShortn(Engine):
     #what to do when engine sees you typed a number
     def do_number(self, keyval):
         if self.lookuptable.get_number_of_candidates():
-            a=int(IBus.keyval_to_unicode(keyval))
-            if a==0:
+            if keyval==0:
                 return False
             else:
-                return self.do_select_candidate(a)
+                return self.do_select_candidate(keyval)
+        return False
     #turns a normal lowercase word into the final product ie from 'hospital' to 'Hospital?' etc
     def appendables(self,a, encodingchange=True):
         the=a
