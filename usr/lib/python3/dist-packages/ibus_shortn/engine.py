@@ -35,8 +35,6 @@
 
 #this is the list of valid shortn engines (ie languages here). EngineShortn is for english. EngineShortnfr is for french, and other languages (like say spanish=es, makes EngineShortnes). language code is 2 letters. before adding or removing anything here make sure that all the other config files are present or else does not load
 __all__ = ["EngineShortn", "EngineShortnfr"]
-#TODO : i hate the "debouncing variables" (ie typing enter once makes the engine register it multiple times, so i use a "debouncing" (also called "overflow" somewhere) variable to ensure that doesn't happen. which is why time is imported. i hate it but it will stay until another way to fix it is found. sorry
-import time
 #necessary
 import gi
 gi.require_version('IBus','1.0')
@@ -393,23 +391,22 @@ class EngineShortn(Engine):
                 return b
         else:
             return sug
-    #when you press esc it "disables" the engine. these are its variables for that
+    #when you press esc it "disables" the engine
     escapetoggle=True
-    #sometimes the code needs an overflow variable. basically pressing one key once will have ibus interpret it as if you pressed it multiple times. these "overflow" variables are meant to prevent this. if a key is pressed multiple times under an interval lesser than 0.3 seconds it will only register it once
-    escapeoverflow=time.time()
     #same thing but for pressing shift
     shifttoggle=False
-    shiftoverflow=time.time()
+    
     #when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
-        #if theres some issue with a user pressing keys too fast like return then delete and it not registering then change all elif to if 
         #mechanism for escape toggle. catches it and changes state
-        if keyval==IBus.Escape and time.time()-self.escapeoverflow>0.3:
+        #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
+        if state & IBus.ModifierType.RELEASE_MASK:
+            return False
+        if keyval==IBus.Escape:
             self.escapetoggle= not self.escapetoggle
             if self.current_input!="":
                 self.commit(self.overarchinglanguage.decodingtooriginal(self.current_input))
             self.cleareverything()
-            self.escapeoverflow=time.time()
             return True
         #mechanism for escape toggle. if on, then return all false
         elif not self.escapetoggle:
@@ -421,9 +418,8 @@ class EngineShortn(Engine):
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
             return False
         #mechanism for shift system
-        if keyval==IBus.KEY_Shift_L and time.time()-self.shiftoverflow>0.3:
+        if keyval==IBus.KEY_Shift_L:
             self.shifttoggle=self.shifttoggle==False
-            self.shiftoverflow=time.time()
             self.showtext(self.current_input)
             return False
         #if enter key pressed then commit it natively aka return false
