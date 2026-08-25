@@ -321,14 +321,6 @@ class EngineShortn(Engine):
         for i in the:
             a+=self.overarchinglanguage.originalalphabetlowercasetouppercase.get(i)
         return a
-    #what to do when engine sees you typed a number
-    def do_number(self, keyval):
-        if self.lookuptable.get_number_of_candidates():
-            if keyval==0:
-                return False
-            else:
-                return self.do_select_candidate(keyval)
-        return False
 
     #turns a normal lowercase word into the final product ie from 'hospital' to 'Hospital?' etc
     def appendables(self,a, encodingchange=True):
@@ -487,6 +479,14 @@ class EngineShortn(Engine):
             self.setcand(self.shortnenginefunction(self.current_input))
         self.showtext(self.current_input)
         return True
+    #what to do when engine sees you typed a number
+    def do_number(self, keyval):
+        if self.lookuptable.get_number_of_candidates():
+            if keyval==0:
+                return False
+            else:
+                return self.do_select_candidate(keyval)
+        return False
 
         
     #after do_process_key_event and you know it's a regular key so what to do with it
@@ -501,7 +501,7 @@ class EngineShortn(Engine):
         if inputchar=="+": return self.do_page_up()
         #commented out because typing "-" is already used as a wordseparator, and moving candidate list is already a niche feature that isn't gonna be used regularly. so having it conflicts with being able to type "-"
         #elif inputchar=="-": return self.do_page_down()
-        
+    
         #turns the current_input into lowercase. necessary for shortn_engine. keep in mind it's NOT converted into the injective latin set. so, it's   input->nocap(input) ->convert(nocap(input))->shortnengine(convert(nocap(input))) -> deconvert(shortnengine(convert(nocap(input))))->appendables(deconvert(shortnengine(convert(nocap(input))))))
         try:
             inputchar=self.nocap(inputchar)
