@@ -339,6 +339,7 @@ class EngineShortn(Engine):
         page_index = self.lookuptable.get_cursor_pos()
         selected = self.lookuptable.get_candidate(page_index+index-1)
         if selected!=None:
+            #gets from selected from candidate list, turns it into ibus text, decodes, appendables, commits, removes caps, clears everything, if capitalizeaftercommit then purn caps back on and disable capitalizeaftercommit
             b=selected.text
             b=self.overarchinglanguage.decodingtooriginal(b)
             b=self.appendables(b,encodingchange=False)+" "
@@ -468,6 +469,7 @@ class EngineShortn(Engine):
         
     #after do_process_key_event and you know it's a regular key so what to do with it
     def do_inputchar(self, inputchar):
+        #if you click on the page up or down button then it moves up and down the suggestion list since candidates shown is limited to 9
         if inputchar == IBus.Page_Down:
             return self.do_page_down()
         elif inputchar == IBus.Page_Up:
@@ -489,6 +491,9 @@ class EngineShortn(Engine):
             return self.do_number(a)
         except:
             True
+        #pressing + or - moves up and down the shown suggestion list since candidates shown is limited to 9
+        if inputchar=="+": return self.do_page_up()
+        elif inputchar=="-": return self.do_page_down()
         #turns the current_input into lowercase. necessary for shortn_engine. keep in mind it's NOT converted into the injective latin set. so, it's   input->nocap(input) ->convert(nocap(input))->shortnengine(convert(nocap(input))) -> deconvert(shortnengine(convert(nocap(input))))->appendables(deconvert(shortnengine(convert(nocap(input))))))
         try:
             inputchar=self.nocap(inputchar)
