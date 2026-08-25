@@ -41,8 +41,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-"""
-import getattr
+
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -50,7 +49,6 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-"""
 #this defines how to handle the localization of languages in terms of shortn engine
 #yes, it's better to convert every non basic latin unicode character into a basic latin character by using upper case basic latin (ie a:a, é:A) because it massively helps on dictionary size and reduces encodign issues. there's no issue since the base input is converted first into lowercase, then into the injective latin set, engineshortn uses it, gives you a list of suggestions, decode it back into original language(ie encodedfrench to regular french) and then uses appendables (capitalization, punctuation etc)
 #so
@@ -151,19 +149,12 @@ class Engine(IBus.Engine):
         self.lookuptable.set_orientation(IBus.Orientation.HORIZONTAL)
         self.init_properties()
         self.init_shortn()
-        #list of vowels
-        self.vowels=self.overarchinglanguage.encodedvowel
-        #every character that shortn accepts as inputtable to the engine
-        self.acceptedshortnenginecharacterlist=self.overarchinglanguage.originalalphabet
-        #appendable things to characters
-        self.commonpunctuation=self.overarchinglanguage.punctuation
         #turn lowercase to uppercase
         self.capital=self.overarchinglanguage.originalalphabetlowercasetouppercase
         #turn uppercase to lowercase
         self.nocaplist=self.overarchinglanguage.originalalphabetuppercasetolowercase
         #punctuation variable
         self.addpunc=None
-        #turns a word into all lowercase
 
     #loads dictionary. call it only once. the dictionary stays loaded. to call it. self.dic. 
     def loaddic(self,curdic=None):
@@ -363,12 +354,12 @@ class EngineShortn(Engine):
     #from a word you get the last vowel aka type "hosptla" you get "a"
     def getlastvowel(self, inpp):
         inp=inpp
-        a=[i for i in inp if i in self.vowels]
+        a=[i for i in inp if i in self.overarchinglanguage.encodedvowel]
         if len(a)>1:
             return a[-1]
         else:
             return None
-    #the main engine function. type "hosptl" and get "hospital"
+    #the main engine function. type "hosptl" and get "hospital". also includes lastvowel system so "hosptla"->hosptl etc
     def shortnenginefunction(self, theinputt):
         theinput=theinputt
         a=self.getlastvowel(theinput)
@@ -389,19 +380,19 @@ class EngineShortn(Engine):
                 return b
         else:
             return sug
-    #when you press esc it "disables" the engine
+    #the "when you press esc it "disables" the engine" variable
     escapetoggle=True
-    #same thing but for pressing shift
+    #the capitalization system variable
     shifttoggle=False
-    
+    #when you type . or ! or ? it capitalizes the word after, it needs a new variable to do that
+    capitalizeaftercommit=False
     
     #when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
-        #mechanism for escape toggle. catches it and changes state
         #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
-        
+        #mechanism for escape toggle. catches it and changes state
         if keyval==IBus.Escape:
             self.escapetoggle= not self.escapetoggle
             if self.current_input!="":
@@ -409,7 +400,7 @@ class EngineShortn(Engine):
             self.cleareverything()
             return True
         #mechanism for escape toggle. if on, then return all false
-        elif not self.escapetoggle:
+        if not self.escapetoggle:
             return False
         # Ignore Alt+<key> and Ctrl+<key>
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
@@ -423,85 +414,111 @@ class EngineShortn(Engine):
         elif keyval==IBus.KEY_Return:
             return False
         return self.do_inputchar(keyval)
+    #what to do when the entered key is a word separator (ie -, _, space) now it functions like regular punctuation but it just commits directly. the use case is to not have to remove space
+    def do_wordseparator(self,entered_word_separator):
+        #if inputchar is space or - or _ then commit current_input with appendables without using shortnengine and if no current_input then just commit space
+        #makes sure current_input isn't empty. if not empty then commits current_input+word_separator
+        if self.current_input!="":
+            #decodes current_input back to original alphabet
+            self.current_input=self.overarchinglanguage.decodingtooriginal(self.current_input)
+            #adds appendables
+            self.current_input=self.appendables(self.current_input, encodingchange=False)
+            #commits current_input+wordseparator
+            self.commit(str(self.current_input)+str(entered_word_separator))
+        else:
+            #if current_input is empty then just commit entered_word_separator
+            self.commit(str(entered_word_separator))
+        #we just commited something so turn off caps, reset setcand. but, if capitalize after commit is on, then turn shifttoggle on, and disabled capitalizeaftercommit
+        self.shifttoggle=False
+        self.setcand()
+        self.cleareverything()
+        if self.capitalizeaftercommit==True:
+            self.shifttoggle=True
+            self.capitalizeaftercommit=False
+        return True
+    #when inputchar is a punctuation
+    #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
+    def do_punctuation(self,punctuationn):
+        #there's a difference between .?! and ,;: because the former should capitalize the next word
+        if punctuationn in {".", "?","!"}:
+            self.capitalizeaftercommit=True
+        #addpunc is a global variable that appendables calls
+        self.addpunc=punctuationn
+        #if you type a character in the list of common punctuation and curent input is empty then cleareverything and then capitalize 
+        if self.current_input=="":
+            self.commit(self.addpunc+" ")
+            self.addpunc=None
+            self.cleareverything
+        self.showtext(self.current_input)
+        return True
     
-    capitalizeaftercommit=False
+    #if you press delete then either current current_input loses one letter, if addpunc exists then just remove addpunc, if current_input not exist then return false so deletes in the "real world"
+    def do_backspace(self):
+        if not self.current_input:
+            return False
+        if self.addpunc!=None and self.addpunc!="":
+            self.addpunc=None
+        else:
+            self.update_current_input(drop=1)
+            self.setcand(self.shortnenginefunction(self.current_input))
+        self.showtext(self.current_input)
+        return True
+
+        
     #after do_process_key_event and you know it's a regular key so what to do with it
     def do_inputchar(self, inputchar):
-        #if inputchar is space then commit current_input with appendables without using shortnengine and if no current_input then just commit space
-        if IBus.keyval_to_unicode(inputchar) in self.overarchinglanguage.wordseparator:
-            inputchar = IBus.keyval_to_unicode(inputchar)
-            if self.current_input!="":
-                rtr=self.overarchinglanguage.decodingtooriginal(self.current_input)
-                rtr=self.appendables(rtr, encodingchange=False)
-                if rtr!=inputchar and rtr!=None:
-                    self.commit(str(rtr)+str(inputchar))
-            else:
-                self.commit(inputchar)
-            self.shifttoggle=False
-            self.setcand()
-            self.cleareverything()
-            if self.capitalizeaftercommit==True:
-                self.shifttoggle=True
-                self.capitalizeaftercommit=False
-            return True
-        elif inputchar == IBus.Page_Down:
+        if inputchar == IBus.Page_Down:
             return self.do_page_down()
         elif inputchar == IBus.Page_Up:
             return self.do_page_up()
-        #if you press delete then either current current_input removes one letter, if current_input not exist then return false so deletes in the "real world"
+        #if you press delete then either current current_input loses one letter, if addpunc exists then just remove addpunc, if current_input not exist then return false so deletes in the "real world"
         elif inputchar == IBus.BackSpace:
-            if not self.current_input:
-                return False
-            self.update_current_input(drop=1)
-            self.setcand(self.shortnenginefunction(self.current_input))
-            self.showtext(self.current_input)
-            return True
-        #turns inputchar from an ibus text to a regular text
-        inputchar=IBus.keyval_to_unicode(inputchar)
+            return self.do_backspace()
+        #turns inputchar from an ibus text to a regular text. IBus.space !=" " automatically
+        elif inputchar==IBus.space:
+            inputchar=" "
+        else:
+            try:
+                inputchar=IBus.keyval_to_unicode(inputchar)
+            except:
+                True  
         #if the thing is a number then treat it like selecting candidate index
         try:
             a=int(inputchar)
             return self.do_number(a)
         except:
             True
-        #turns the current_input into lowercase. necessary for shortn_engine
+        #turns the current_input into lowercase. necessary for shortn_engine. keep in mind it's NOT converted into the injective latin set. so, it's   input->nocap(input) ->convert(nocap(input))->shortnengine(convert(nocap(input))) -> deconvert(shortnengine(convert(nocap(input))))->appendables(deconvert(shortnengine(convert(nocap(input))))))
         try:
             inputchar=self.nocap(inputchar)
         except:
             True
-        #if the inputchar is neither in latin alphabet nor a common punctuation then let it commit natively aka return false. so like #$% etc
-        if inputchar not in self.acceptedshortnenginecharacterlist and inputchar not in self.commonpunctuation:
+        #if the inputchar is neither in alphabet nor a common punctuation then let it commit natively aka return false. so like #$% etc
+        if inputchar not in self.overarchinglanguage.originalalphabet and inputchar not in self.overarchinglanguage.punctuation and inputchar not in self.overarchinglanguage.wordseparator:
             return False
+        #if typed character (inputchar) is in wordseparator then do the word_separator. ie space_- (this changes, for example in french we treat ' as a wordseparator to type l' (as in l'atmsphr-> commits l' then asks you to select atmsphr to make "l'atmosphère")
+    
+        if inputchar in self.overarchinglanguage.wordseparator:
+            return self.do_wordseparator(inputchar)
+        #if inputchar is a regular punctuation like ,.?;:!
+        if inputchar in self.overarchinglanguage.punctuation:
+            return self.do_punctuation(inputchar)
         #converts into injective latin set
         try:
             inputchar=self.overarchinglanguage.encodingfromoriginal(inputchar)
         except:
             True
-        #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
-        if inputchar in self.commonpunctuation:
-            if inputchar=="." or inputchar=="?" or inputchar=="!":
-                self.capitalizeaftercommit=True
-            self.addpunc=inputchar
-            #if you type a character in the list of common punctuation and curent input is empty then cleareverything and then capitalize 
-            if self.current_input==None or self.current_input=="":
-                self.commit(self.addpunc+" ")
-                self.addpunc=None
-                self.cleareverything
-                if inputchar=="." or inputchar=="?" or inputchar=="!":
-                    self.shifttoggle=True
-                    self.capitalizeaftercommit=False
-                return True
-        else:
-            #if inputchar is not punctuation then append it to current_input
-            self.update_current_input(append=inputchar)
+        #since inputchar is a regular letter for shortnengine then append it to current_input
+        self.update_current_input(append=inputchar)
         #from current_input ask shortnengine for a list of suggestions. if list not empty then display it. then show the current_input.
         suglist=self.shortnenginefunction(self.current_input)
-        if suglist!=None and type(suglist)==list and type(suglist)!=None:
+        if suglist!=None and type(suglist)==list and type(suglist)!=None and len(suglist)!=0:
             self.setcand(thelist=suglist)
+        #keep in mind showtext has appendables inside
         self.showtext(self.current_input)
         return True
 
-
+#so EngineShortn is actually the default engine which is also english. making a new engine changes that like below
 class EngineShortnfr(EngineShortn):
     #The Shortn FR engine.
     __gtype_name__ = "EngineShortnfr"
