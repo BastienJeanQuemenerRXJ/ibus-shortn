@@ -178,7 +178,7 @@ class Engine(IBus.Engine):
         else:
             self.commit_text(inp)
     #self.current_showtext    this is the name of what's being shown in the editable text input
-    #shows you thestr in the edit window. keep in mind that what's shown is ran through appendables so for example if thestr=hosptl and shifttoggle is on and addpunc is "," then what's shown is "Hosptl,". albeit be aware that shortnengine does NOT see "Hosptl," it will always only see "hosptl"
+    #shows you thestr in the edit window. keep in mind that what's shown is ran through appendables so for example if thestr=hosptl and shifttoggle is on and punctuationvariable is "," then what's shown is "Hosptl,". albeit be aware that shortnengine does NOT see "Hosptl," it will always only see "hosptl"
     def showtext(self, thestr):
         thestr=self.appendables(thestr)
         text = IBus.Text.new_from_string(thestr)
@@ -205,6 +205,7 @@ class Engine(IBus.Engine):
                 self.lookuptable.append_candidate(IBus.Text.new_from_string(abcd))
                 num_candidates += 1
         self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
+        return True
     #this does something with respect to ibus keyboard localization settings or something idk. came from ibus-cangjie
     def init_properties(self):
         self.prop_list = IBus.PropList()
@@ -267,7 +268,7 @@ class Engine(IBus.Engine):
         self.current_input = ""
         self.clear_on_next_input = False
         self.setcand(tables=True)
-        self.addpunc=None
+        self.punctuationvariable=None
         self.showtext("")
     #this updates the showtext variable and current_input variable. append is what you add to the current_input and current_showtext, drop is how much you remove
     def update_current_input(self, append=None, drop=None):
@@ -289,7 +290,7 @@ class EngineShortn(Engine):
     __gtype_name__ = "EngineShortn"
     __name__ = "shortn"
     #the global punctuation variable
-    addpunc=None
+    punctuationvariable=None
     #the "when you press esc it "disables" the engine" variable
     escapetoggle=True
     #the capitalization system variable
@@ -342,8 +343,8 @@ class EngineShortn(Engine):
             the=self.overarchinglanguage.decodingtooriginal(the)
         if self.shifttoggle:
             the=self.firstcap(the)
-        if self.addpunc!=None:
-            the+=self.addpunc
+        if self.punctuationvariable!=None:
+            the+=self.punctuationvariable
         return the
     #once you get 'index' aka number what you do to it aka you choose from the list and input it
     def do_select_candidate(self, index):
@@ -394,7 +395,8 @@ class EngineShortn(Engine):
                 return b
         else:
             return sug
-    #when you type ANY key what to do
+    
+    #called by ibus do not rename this function. when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
         #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
         if state & IBus.ModifierType.RELEASE_MASK:
@@ -420,7 +422,23 @@ class EngineShortn(Engine):
         #if enter/return/newline key pressed then commit it natively aka return false
         elif keyval==IBus.KEY_Return:
             return False
-        return self.do_inputchar(keyval)
+        #if you click on the page up or down button then it moves up and down the suggestion list since candidates shown is limited to 9
+        if keyval == IBus.Page_Down:
+            return self.do_page_down()
+        elif keyval == IBus.Page_Up:
+            return self.do_page_up()
+        #if you press delete then either current current_input loses one letter, if punctuationvariable exists then just remove punctuationvariable, if current_input not exist then return false so deletes in the "real world"
+        elif keyval == IBus.BackSpace:
+            return self.do_backspace()
+        #turns keyval from an ibus text to a regular text. IBus.space !=" " automatically
+        elif keyval==IBus.space:
+            keyval=" "
+        else:
+            try:
+                keyval=IBus.keyval_to_unicode(keyval)
+            except:
+                True  
+        return self.do_regular_key(keyval)
     #what to do when the entered key is a word separator (ie -, _, space) now it functions like regular punctuation but it just commits directly. the use case is to not have to remove space
     def do_wordseparator(self,entered_word_separator):
         #if inputchar is space or - or _ then commit current_input with appendables without using shortnengine and if no current_input then just commit space
@@ -443,27 +461,27 @@ class EngineShortn(Engine):
             self.capitalizeaftercommit=False
         return True
     #when inputchar is a punctuation
-    #if inputchar is a regular punctuation then make it self.addpunc (the punctuation variable). if current_input is empty then just commit addpunc and call it a day. if current_input is not empty then nothing happens other than self.addpunc being updated accordingly
+    #if inputchar is a regular punctuation then make it self.punctuationvariable (the punctuation variable). if current_input is empty then just commit punctuationvariable and call it a day. if current_input is not empty then nothing happens other than self.punctuationvariable being updated accordingly
     def do_punctuation(self,punctuationn):
         #there's a difference between .?! and ,;: because the former should capitalize the next word
         if punctuationn in {".", "?","!"}:
             self.capitalizeaftercommit=True
-        #addpunc is a global variable that appendables calls
-        self.addpunc=punctuationn
+        #punctuationvariable is a global variable that appendables calls
+        self.punctuationvariable=punctuationn
         #if you type a character in the list of common punctuation and curent input is empty then cleareverything and then capitalize 
         if self.current_input=="":
-            self.commit(self.addpunc+" ")
+            self.commit(self.punctuationvariable+" ")
             self.cleareverything()
         else:
             self.showtext(self.current_input)
         return True
     
-    #if you press delete then either current current_input loses one letter, if addpunc exists then just remove addpunc, if current_input not exist then return false so deletes in the "real world"
+    #if you press delete then either current current_input loses one letter, if punctuationvariable exists then just remove punctuationvariable, if current_input not exist then return false so deletes in the "real world"
     def do_backspace(self):
         if not self.current_input:
             return False
-        if self.addpunc!=None and self.addpunc!="":
-            self.addpunc=None
+        if self.punctuationvariable!=None and self.punctuationvariable!="":
+            self.punctuationvariable=None
         else:
             self.update_current_input(drop=1)
             self.setcand(self.shortnenginefunction(self.current_input))
@@ -472,23 +490,7 @@ class EngineShortn(Engine):
 
         
     #after do_process_key_event and you know it's a regular key so what to do with it
-    def do_inputchar(self, inputchar):
-        #if you click on the page up or down button then it moves up and down the suggestion list since candidates shown is limited to 9
-        if inputchar == IBus.Page_Down:
-            return self.do_page_down()
-        elif inputchar == IBus.Page_Up:
-            return self.do_page_up()
-        #if you press delete then either current current_input loses one letter, if addpunc exists then just remove addpunc, if current_input not exist then return false so deletes in the "real world"
-        elif inputchar == IBus.BackSpace:
-            return self.do_backspace()
-        #turns inputchar from an ibus text to a regular text. IBus.space !=" " automatically
-        elif inputchar==IBus.space:
-            inputchar=" "
-        else:
-            try:
-                inputchar=IBus.keyval_to_unicode(inputchar)
-            except:
-                True  
+    def do_regular_key(self, inputchar):
         #if the thing is a number then treat it like selecting candidate index
         try:
             a=int(inputchar)
