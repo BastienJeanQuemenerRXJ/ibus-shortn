@@ -63,7 +63,7 @@ def logwrite(the, e=0):
 #shows you éducation
 #if you have caps or something it will only apply caps thing at the end. (ie appendables)
 #again. this is actually better. without this, dictionary size rises to astronomical levels (iirc russian dictionary size rises to 80mb instead of, now, 8mb) just make sure your new encoded latin set is injective (no collisions)
-#again, even if you wanted to remove it, python3 has problems reading large json files with accents. so it would literally not work
+#again, even if you wanted to remove it, python3 has problems reading large json files with accents. so it would literally not work. if the language doesn't need this (ie the language already only uses the basic latin alphabet) then just set the encode and decode function as x:x to not break anything, like english does
 class language:
     def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname, wordseparator):
         #list of what the user types and it's recognized. 
@@ -135,6 +135,9 @@ langlist={"fr":fr, "en":en}
 class Engine(IBus.Engine):
     """The base class for Shortn engines."""
     def __init__(self):
+        # bash command $ibus engine shortn makes english shortn. equivalent to selecting english shortn keyboard. $ibus engine shortnfr makes for french. again, equivalent with native keyboards. the name of the engine, if not english, is shortn[x] where x is a 2 letter lower case language code, so, ru, de, fr, es, etc. ie shortnfr, shortnru, shortnes. there is no shortnen since shortn =default=english. it's the default because it was the easiest language to work with at first (no accents, no weird words (like aujourd'hui which uses a ') or compounding (like l'atmosphère where l' and atmosphère are separate words)).
+        #if engine name is shortn then language is english, if not then it has to be of the form shortnLC, so cut down "shortn" to get LC which is the language code (fr, ru, de,es...)
+        #overarchinglanguage is the language that the engine uses, dynamically changes whenever you change engine (shortnes->shortnfr etc). global variable
         self.overarchinglanguage= en if self.__name__ == "shortn" else langlist.get(self.__name__[6:], en)
         self.dic=self.loaddic()
         super(Engine, self).__init__()
@@ -145,17 +148,15 @@ class Engine(IBus.Engine):
         self.current_showtext = ""
         self.clear_on_next_input = False
         self.lookuptable = IBus.LookupTable()
+        #maximum candidate list showing size is 9 because beyond 9 is 10,11,12 and there's no 10, 11, 12... key on your keyboard (can only press 1 and then 0)
+        #also we don't use 0 as a candidate index (for the user, keep in mind that python indexes start at 0 ie list[0] =first element) but maybe we could find a functionality for pressing 0
         self.lookuptable.set_page_size(9)
+        #ideally something like this should be changeable in settings. what this does is that if you press candidate list to move up or down and it hits the end of the index, then it returns back to the original. if False then stops moving even if you press to move candidate list shown
         self.lookuptable.set_round(True)
+        #ideally something like this should be changeable in settings. what it says on the tin: suggestions are displayed horizontally or vertically
         self.lookuptable.set_orientation(IBus.Orientation.HORIZONTAL)
         self.init_properties()
         self.init_shortn()
-        #turn lowercase to uppercase
-        self.capital=self.overarchinglanguage.originalalphabetlowercasetouppercase
-        #turn uppercase to lowercase
-        self.nocaplist=self.overarchinglanguage.originalalphabetuppercasetolowercase
-        #punctuation variable
-        self.addpunc=None
 
     #loads dictionary. call it only once. the dictionary stays loaded. to call it. self.dic. 
     def loaddic(self,curdic=None):
@@ -287,11 +288,20 @@ class EngineShortn(Engine):
     """The English Shortn engine."""
     __gtype_name__ = "EngineShortn"
     __name__ = "shortn"
+    #the global punctuation variable
+    addpunc=None
+    #the "when you press esc it "disables" the engine" variable
+    escapetoggle=True
+    #the capitalization system variable
+    shifttoggle=False
+    #when you type . or ! or ? it capitalizes the word after, it needs a new variable to do that
+    capitalizeaftercommit=False
+    
     #turns a word into all lowercase
     def nocap(self, the):
         a=""
         for i in the:
-            a+=self.nocaplist.get(i,i)
+            a+=self.overarchinglanguage.originalalphabetuppercasetolowercase.get(i,i)
         return a
     #turns a word into all lowercase except first letter that is uppercase
     def firstcap(self, the):
@@ -302,13 +312,13 @@ class EngineShortn(Engine):
         except:
             True
         if len(the)==1:
-            return self.capital.get(the)
-        return str(str(self.capital.get(the[:1],the[:1]))+str(the[1:]))
+            return self.overarchinglanguage.originalalphabetlowercasetouppercase.get(the)
+        return str(str(self.overarchinglanguage.originalalphabetlowercasetouppercase.get(the[:1],the[:1]))+str(the[1:]))
     #turns a word into all uppercase
     def allcap(self,the):
         a=""
         for i in the:
-            a+=self.capital.get(i)
+            a+=self.overarchinglanguage.originalalphabetlowercasetouppercase.get(i)
         return a
     #what to do when engine sees you typed a number
     def do_number(self, keyval):
@@ -318,6 +328,7 @@ class EngineShortn(Engine):
             else:
                 return self.do_select_candidate(keyval)
         return False
+
     #turns a normal lowercase word into the final product ie from 'hospital' to 'Hospital?' etc
     def appendables(self,a, encodingchange=True):
         the=a
@@ -346,6 +357,7 @@ class EngineShortn(Engine):
             self.commit(b)
             self.shifttoggle=False
         self.cleareverything()
+        #this is the capitalizeaftercommit mechanism. necessary because otherwise if someone types "test." it would capitalize "test" itself, ie typing "test. word " would make "Test. word" which we don't want (we want "test. word "->"test. Word ")
         if self.capitalizeaftercommit==True:
             self.shifttoggle=True
             self.capitalizeaftercommit=False
@@ -382,13 +394,6 @@ class EngineShortn(Engine):
                 return b
         else:
             return sug
-    #the "when you press esc it "disables" the engine" variable
-    escapetoggle=True
-    #the capitalization system variable
-    shifttoggle=False
-    #when you type . or ! or ? it capitalizes the word after, it needs a new variable to do that
-    capitalizeaftercommit=False
-    
     #when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
         #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
@@ -412,7 +417,7 @@ class EngineShortn(Engine):
             self.shifttoggle=self.shifttoggle==False
             self.showtext(self.current_input)
             return True
-        #if enter key pressed then commit it natively aka return false
+        #if enter/return/newline key pressed then commit it natively aka return false
         elif keyval==IBus.KEY_Return:
             return False
         return self.do_inputchar(keyval)
@@ -432,7 +437,6 @@ class EngineShortn(Engine):
             self.commit(str(entered_word_separator))
         #we just commited something so turn off caps, reset setcand. but, if capitalize after commit is on, then turn shifttoggle on, and disabled capitalizeaftercommit
         self.shifttoggle=False
-        self.setcand()
         self.cleareverything()
         if self.capitalizeaftercommit==True:
             self.shifttoggle=True
@@ -449,9 +453,9 @@ class EngineShortn(Engine):
         #if you type a character in the list of common punctuation and curent input is empty then cleareverything and then capitalize 
         if self.current_input=="":
             self.commit(self.addpunc+" ")
-            self.addpunc=None
-            self.cleareverything
-        self.showtext(self.current_input)
+            self.cleareverything()
+        else:
+            self.showtext(self.current_input)
         return True
     
     #if you press delete then either current current_input loses one letter, if addpunc exists then just remove addpunc, if current_input not exist then return false so deletes in the "real world"
@@ -493,7 +497,9 @@ class EngineShortn(Engine):
             True
         #pressing + or - moves up and down the shown suggestion list since candidates shown is limited to 9
         if inputchar=="+": return self.do_page_up()
-        elif inputchar=="-": return self.do_page_down()
+        #commented out because typing "-" is already used as a wordseparator, and moving candidate list is already a niche feature that isn't gonna be used regularly. so having it conflicts with being able to type "-"
+        #elif inputchar=="-": return self.do_page_down()
+        
         #turns the current_input into lowercase. necessary for shortn_engine. keep in mind it's NOT converted into the injective latin set. so, it's   input->nocap(input) ->convert(nocap(input))->shortnengine(convert(nocap(input))) -> deconvert(shortnengine(convert(nocap(input))))->appendables(deconvert(shortnengine(convert(nocap(input))))))
         try:
             inputchar=self.nocap(inputchar)
