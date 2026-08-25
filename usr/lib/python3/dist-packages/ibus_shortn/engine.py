@@ -41,7 +41,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-
+"""
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -49,6 +49,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
+"""
 #this defines how to handle the localization of languages in terms of shortn engine
 #yes, it's better to convert every non basic latin unicode character into a basic latin character by using upper case basic latin (ie a:a, é:A) because it massively helps on dictionary size and reduces encodign issues. there's no issue since the base input is converted first into lowercase, then into the injective latin set, engineshortn uses it, gives you a list of suggestions, decode it back into original language(ie encodedfrench to regular french) and then uses appendables (capitalization, punctuation etc)
 #so
