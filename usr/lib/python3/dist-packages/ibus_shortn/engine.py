@@ -434,6 +434,9 @@ class EngineShortn(Engine):
         if self.current_input=="":
             self.commit(self.punctuationvariable+" ")
             self.cleareverything()
+            if self.capitalizeaftercommit:
+                self.capitalizeaftercommit=False
+                self.shifttoggle=True
         else:
             self.showtext(self.current_input)
         return True
