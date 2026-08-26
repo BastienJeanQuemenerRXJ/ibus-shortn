@@ -65,16 +65,12 @@ def logwrite(the, e=0):
 #again. this is actually better. without this, dictionary size rises to astronomical levels (iirc russian dictionary size rises to 80mb instead of, now, 8mb) just make sure your new encoded latin set is injective (no collisions)
 #again, even if you wanted to remove it, python3 has problems reading large json files with accents. so it would literally not work. if the language doesn't need this (ie the language already only uses the basic latin alphabet) then just set the encode and decode function as x:x to not break anything, like english does
 class language:
-    def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodingfromoriginal, decodingtooriginal, encodedvowel, punctuation, dictionaryname, wordseparator):
+    def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodedvowel, punctuation, dictionaryname, wordseparator, encodelist, decodelist):
         #list of what the user types and it's recognized. 
         self.originalalphabet = originalalphabet
         #converts originalalphabet from lowercase to uppercase
         self.originalalphabetlowercasetouppercase = originalalphabetlowercasetouppercase
         self.originalalphabetuppercasetolowercase = originalalphabetuppercasetolowercase
-        #from original (ie éducation) to encoded (ie Mducation)
-        self.encodingfromoriginal = encodingfromoriginal
-        #reverse
-        self.decodingtooriginal = decodingtooriginal
         #vowel list in encoded latin set (ie a,e,i,y, M)
         self.encodedvowel = encodedvowel
         #punctuation at the end, like "Éducation,"
@@ -83,54 +79,33 @@ class language:
         self.dictionaryname = dictionaryname
         #like punctuation but pressing it instantly commits without selection
         self.wordseparator=wordseparator
+        #encode list    from original (ie éducation) to encoded (ie Mducation)
+        self.encodelist=encodelist
+        #decode list   reverse
+        self.decodelist=decodelist
+
     #encodes into the injective new latin set
-    def encoding(self, the,scheme):
+    def encoding(self, the):
         a=""
         for i in the:
-            a+= self.originalalphabetuppercasetolowercase.get(i,i)
+            try:
+                a+= self.originalalphabetuppercasetolowercase.get(i,i)
+            except:
+                a+=i
         the=a
         a=""
         for i in the:
-            a+= scheme.get(i,i)
+            a+= self.encodelist.get(i,i)
         return a
     #decodes
-    def decoding(self, the, scheme):
+    def decoding(self, the):
         a=""
         for i in the:
-            a+= scheme.get(i,i)
+            try:
+                a+= self.decodelist.get(i,i)
+            except:
+                a+=i
         return a
-        
-#TODO make .json files for this that engine.py calls
-en=language(
-    {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"},
-    { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " "},
-    {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " "},
-    lambda x:x,
-    lambda x:x,
-    {'a', 'e', 'i', 'o', 'u', 'y'},
-    {"?", "!", ".", ";", ","},
-    "en.json",
-    {" ", "-", "_"}
-    )
-#english doesnt need a remapping because it doesn't have accents (basic latin)
-
-fr=language(
-    {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ö", "ä", "ü", "ï", "ë", "ù", "è", "à", "ç", "ô", "â", "ê", "î", "û", "é", "'"},
-    { "a": "A", "b": "B", "c": "C", "d": "D", "e": "E", "f": "F", "g": "G", "h": "H", "i": "I", "j": "J", "k": "K", "l": "L", "m": "M", "n": "N", "o": "O","p": "P", "q": "Q", "r": "R", "s": "S", "t": "T","u": "U", "v": "V", "w": "W", "x": "X", "y": "Y", "z": "Z", "'":"'", " ": " ","ö":"Ö","ä":"Ä","ü":"Ü","ï":"Ï","ë":"Ë","ù":"Ù","è":"È","à":"À","ç":"Ç","ô":"Ô","â":"Â","ê":"Ê","î":"Î","û":"Û","é":"É" },
-    {"A": "a", "B": "b", "C": "c", "D": "d", "E": "e", "F": "f", "G": "g", "H": "h", "I": "i", "J": "j", "K": "k", "L": "l", "M": "m", "N": "n", "O": "o", "P": "p", "Q": "q", "R": "r", "S": "s", "T": "t","U": "u", "V": "v", "W": "w", "X": "x", "Y": "y","Z": "z", "'": "'", " ": " ", "Ö":"ö","Ä":"ä","Ü":"ü","Ï":"ï","Ë":"ë","Ù":"ù","È":"è","À":"à","Ç":"ç","Ô":"ô","Â":"â","Ê":"ê","Î":"î","Û":"û","É":"é"},
-    lambda x : fr.encoding(x, {"ö":"O", "ä":"A", "ü":"U", "ï":"I", "ë":"E", "ù":"Y", "è":"R", "à":"W", "ç":"C", "ô":"K", "â":"S", "ê":"F", "î":"V", "û":"N", "é":"M"}),
-    lambda x : fr.decoding(x, {"O":"ö", "A":"ä", "U":"ü", "I":"ï", "E":"ë", "Y":"ù", "R":"è", "W":"à", "C":"ç", "K":"ô", "S":"â", "F":"ê", "V":"î", "N":"û", "M":"é"}),
-    {'a', 'e', 'i', 'o', 'u', 'y', "O", "A", "U", "I", "E", "Y", "R", "W", "K", "S", "F", "V", "N", "M"},
-    {"?", "!", ".", ";", ","},
-    "fr.json",
-    {" ", "'", "_", "-"}
-    )
-#list of language configs. TODO: del all the other unused languages whenever engine switches
-langlist={"fr":fr, "en":en}
-
-
-
-
 
 class Engine(IBus.Engine):
     """The base class for Shortn engines."""
@@ -138,7 +113,12 @@ class Engine(IBus.Engine):
         # bash command $ibus engine shortn makes english shortn. equivalent to selecting english shortn keyboard. $ibus engine shortnfr makes for french. again, equivalent with native keyboards. the name of the engine, if not english, is shortn[x] where x is a 2 letter lower case language code, so, ru, de, fr, es, etc. ie shortnfr, shortnru, shortnes. there is no shortnen since shortn =default=english. it's the default because it was the easiest language to work with at first (no accents, no weird words (like aujourd'hui which uses a ') or compounding (like l'atmosphère where l' and atmosphère are separate words)).
         #if engine name is shortn then language is english, if not then it has to be of the form shortnLC, so cut down "shortn" to get LC which is the language code (fr, ru, de,es...)
         #overarchinglanguage is the language that the engine uses, dynamically changes whenever you change engine (shortnes->shortnfr etc). global variable
-        self.overarchinglanguage= en if self.__name__ == "shortn" else langlist.get(self.__name__[6:], en)
+        self.langcode= "en" if self.__name__ == "shortn" else self.__name__[6:]
+        import json
+        with open("/usr/lib/python3/dist-packages/ibus_shortn/"+self.langcode+"-config.json", 'r') as a:
+            a=json.load(a)
+            self.overarchinglanguage=language(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8])
+            del a
         self.dic=self.loaddic()
         super(Engine, self).__init__()
         schema_id = "org.shortn-scheme.ibus.%s" % self.__name__
@@ -201,7 +181,7 @@ class Engine(IBus.Engine):
         if thelist!=None:
             num_candidates = 0
             for c in thelist:
-                abcd=self.overarchinglanguage.decodingtooriginal(c)
+                abcd=self.overarchinglanguage.decoding(c)
                 self.lookuptable.append_candidate(IBus.Text.new_from_string(abcd))
                 num_candidates += 1
         self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
@@ -332,7 +312,7 @@ class EngineShortn(Engine):
         elif the==None:
             return None
         if encodingchange:
-            the=self.overarchinglanguage.decodingtooriginal(the)
+            the=self.overarchinglanguage.decoding(the)
         if self.shifttoggle:
             the=self.firstcap(the)
         if self.punctuationvariable!=None:
@@ -345,7 +325,7 @@ class EngineShortn(Engine):
         if selected!=None:
             #gets from selected from candidate list, turns it into ibus text, decodes, appendables, commits, removes caps, clears everything, if capitalizeaftercommit then purn caps back on and disable capitalizeaftercommit
             b=selected.text
-            b=self.overarchinglanguage.decodingtooriginal(b)
+            b=self.overarchinglanguage.decoding(b)
             b=self.appendables(b,encodingchange=False)+" "
             self.commit(b)
             self.shifttoggle=False
@@ -397,7 +377,7 @@ class EngineShortn(Engine):
         if keyval==IBus.Escape:
             self.escapetoggle= not self.escapetoggle
             if self.current_input!="":
-                self.commit(self.overarchinglanguage.decodingtooriginal(self.current_input))
+                self.commit(self.overarchinglanguage.decoding(self.current_input))
             self.cleareverything()
             return True
         #mechanism for escape toggle. if on, then return all false
@@ -437,7 +417,7 @@ class EngineShortn(Engine):
         #makes sure current_input isn't empty. if not empty then commits current_input+word_separator
         if self.current_input!="":
             #decodes current_input back to original alphabet
-            self.current_input=self.overarchinglanguage.decodingtooriginal(self.current_input)
+            self.current_input=self.overarchinglanguage.decoding(self.current_input)
             #adds appendables
             self.current_input=self.appendables(self.current_input, encodingchange=False)
             #commits current_input+wordseparator
@@ -519,7 +499,7 @@ class EngineShortn(Engine):
             return self.do_punctuation(inputchar)
         #converts into injective latin set
         try:
-            inputchar=self.overarchinglanguage.encodingfromoriginal(inputchar)
+            inputchar=self.overarchinglanguage.encoding(inputchar)
         except:
             True
         #since inputchar is a regular letter for shortnengine then append it to current_input
