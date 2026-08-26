@@ -19,12 +19,6 @@
 
 
 
-
-
-#okay so if you want to optimize this code, do ctrl f "TODO" and look at the comments
-
-
-
 #try to replace multiple line if statements by one line if statements
 #if age >= 18: print("Adult")
 #and
@@ -88,10 +82,8 @@ class language:
     def encoding(self, the):
         a=""
         for i in the:
-            try:
-                a+= self.originalalphabetuppercasetolowercase.get(i,i)
-            except:
-                a+=i
+            #if it can't find it then use 'i'  (    fyi  thing.get(a,b) returns b if thing.get(a) doesn't exist
+            a+= self.originalalphabetuppercasetolowercase.get(i,i)
         the=a
         a=""
         for i in the:
@@ -101,10 +93,7 @@ class language:
     def decoding(self, the):
         a=""
         for i in the:
-            try:
-                a+= self.decodelist.get(i,i)
-            except:
-                a+=i
+            a+= self.decodelist.get(i,i)
         return a
 
 class Engine(IBus.Engine):
@@ -113,20 +102,31 @@ class Engine(IBus.Engine):
         # bash command $ibus engine shortn makes english shortn. equivalent to selecting english shortn keyboard. $ibus engine shortnfr makes for french. again, equivalent with native keyboards. the name of the engine, if not english, is shortn[x] where x is a 2 letter lower case language code, so, ru, de, fr, es, etc. ie shortnfr, shortnru, shortnes. there is no shortnen since shortn =default=english. it's the default because it was the easiest language to work with at first (no accents, no weird words (like aujourd'hui which uses a ') or compounding (like l'atmosphère where l' and atmosphère are separate words)).
         #if engine name is shortn then language is english, if not then it has to be of the form shortnLC, so cut down "shortn" to get LC which is the language code (fr, ru, de,es...)
         #overarchinglanguage is the language that the engine uses, dynamically changes whenever you change engine (shortnes->shortnfr etc). global variable
+        #this is how we get the language code
         self.langcode= "en" if self.__name__ == "shortn" else self.__name__[6:]
+        #getting the language config and loading it 
         import json
         with open("/usr/lib/python3/dist-packages/ibus_shortn/"+self.langcode+"-config.json", 'r') as a:
             a=json.load(a)
             self.overarchinglanguage=language(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8])
             del a
-        self.dic=self.loaddic()
+        #obtaining the dictionary list and loading it
+        with open("/usr/lib/python3/dist-packages/ibus_shortn/"+self.langcode+".json", 'r') as a:
+            self.dic=json.load(a)
+            del a
+        #initializing the engine 
         super(Engine, self).__init__()
+        #im not sure exactly. gets the schematics. useful for a native setting environment in the future. there's no "org.shortn-scheme.ibus" in the files but removing it breaks everything so idk. most likely i have to touch this to add native ui settings
         schema_id = "org.shortn-scheme.ibus.%s" % self.__name__
         self.settings = Gio.Settings(schema_id=schema_id)
         self.settings.connect("changed", self.on_value_changed)
+        #current input 
         self.current_input = ""
+        #current text shown (usually also current_input most of the time but don't merge the variables for good practice)
         self.current_showtext = ""
+        #reset everything on next word (im not sure at all)
         self.clear_on_next_input = False
+        #initializes the ui (i think?)
         self.lookuptable = IBus.LookupTable()
         #maximum candidate list showing size is 9 because beyond 9 is 10,11,12 and there's no 10, 11, 12... key on your keyboard (can only press 1 and then 0)
         #also we don't use 0 as a candidate index (for the user, keep in mind that python indexes start at 0 ie list[0] =first element) but maybe we could find a functionality for pressing 0
@@ -138,16 +138,6 @@ class Engine(IBus.Engine):
         self.init_properties()
         self.init_shortn()
 
-    #loads dictionary. call it only once. the dictionary stays loaded. to call it. self.dic. 
-    def loaddic(self,curdic=None):
-        curdic="/usr/lib/python3/dist-packages/ibus_shortn/"+self.overarchinglanguage.dictionaryname if curdic==None else curdic
-        try:
-            import json
-            with open(curdic,'r') as dic:
-                return json.load(dic)
-        except Exception as err:
-            #logwrite("dicloading failed because of"+err, e=1)
-            return {"json":["failed"]}
     #commits inp (string) as final output. if ibusencode==False then it assumes inp is already converted into ibus encode. if you want to deconvert something from ibus encode to text, then you can do inp.text
     #it is necessary for what is being committed to be in ibus encode in the end
     def commit(self,inp=None, ibusencode=True):
