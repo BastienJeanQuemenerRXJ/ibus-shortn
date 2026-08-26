@@ -96,6 +96,7 @@ class language:
             a+= self.decodelist.get(i,i)
         return a
 
+#the shortn engine. this is also the english (en) english because '''$ibus engine shortn''' has to return something instead of being only able to command '''ibus engine shortnen''' (shortnen as an engine doesn't exist by convention)
 class Engine(IBus.Engine):
     """The base class for Shortn engines."""
     def __init__(self):
@@ -337,26 +338,22 @@ class EngineShortn(Engine):
         else:
             return None
     #the main engine function. type "hosptl" and get "hospital". also includes lastvowel system so "hosptla"->hosptl etc
-    def shortnenginefunction(self, theinputt):
-        theinput=theinputt
-        a=self.getlastvowel(theinput)
-        if a!=None:
+    def shortnenginefunction(self, theinput):
+        lastvowelvar=self.getlastvowel(theinput)
+        if lastvowelvar!=None:
             theinput=theinput[:-1]
         try:
             sug= self.dic.get(theinput)
         except:
             return None
-        if a!=None:
-            if type(sug)==list:
-                b= [i for i in sug if self.getlastvowel(i)==a]
-            else:
-                return None
-            if len(b)==0:
-                return None
-            else:
+        if lastvowelvar!=None:
+            try:
+                b= [i for i in sug if self.getlastvowel(i)==lastvowelvar]
+                t=b[0]
                 return b
-        else:
-            return sug
+            except:
+                return None
+        return sug
     
     #called by ibus do not rename this function. when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
@@ -498,9 +495,7 @@ class EngineShortn(Engine):
         #since inputchar is a regular letter for shortnengine then append it to current_input
         self.update_current_input(append=inputchar)
         #from current_input ask shortnengine for a list of suggestions. if list not empty then display it. then show the current_input.
-        suglist=self.shortnenginefunction(self.current_input)
-        if suglist!=None and type(suglist)==list and type(suglist)!=None and len(suglist)!=0:
-            self.setcand(thelist=suglist)
+        self.setcand(self.shortnenginefunction(self.current_input))
         #keep in mind showtext has appendables inside
         self.showtext(self.current_input)
         return True
