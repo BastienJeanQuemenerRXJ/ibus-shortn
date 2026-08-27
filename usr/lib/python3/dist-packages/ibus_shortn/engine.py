@@ -136,6 +136,8 @@ class Engine(IBus.Engine):
         self.lookuptable.set_round(True)
         #ideally something like this should be changeable in settings. what it says on the tin: suggestions are displayed horizontally or vertically
         self.lookuptable.set_orientation(IBus.Orientation.HORIZONTAL)
+        #there's a cursor (it highlights a specific candidate in the list that you can see, ie, on the shown candidate list. if you were to fork off of this you might want to turn it on to have an additional functionality to do something
+        self.lookuptable.set_cursor_visible(False)
         self.init_properties()
         self.init_shortn()
 
@@ -150,8 +152,10 @@ class Engine(IBus.Engine):
             self.commit_text(inp)
     #self.current_showtext    this is the name of what's being shown in the editable text input
     #shows you thestr in the edit window. keep in mind that what's shown is ran through appendables so for example if thestr=hosptl and shifttoggle is on and punctuationvariable is "," then what's shown is "Hosptl,". albeit be aware that shortnengine does NOT see "Hosptl," it will always only see "hosptl"
-    def showtext(self, thestr):
-        thestr=self.appendables(thestr)
+    #setting noencoding to True prevents the appendables
+    def showtext(self, thestr, noencoding=False):
+        if not noencoding:
+            thestr=self.appendables(thestr)
         text = IBus.Text.new_from_string(thestr)
         super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
         # We don't use pre-edit at all for Shortn or Quick. However, some applications (most notably Firefox) fail to correctly position the candidate popup, as if they got confused by the absence of a pre-edit text. fix this 
@@ -161,19 +165,16 @@ class Engine(IBus.Engine):
             super(Engine, self).update_preedit_text(IBus.Text.new_from_string(''), 0, False)
     
 
-    #sets the list of candidates from a list of strings called thelist. if thelist==None then removes the candidate list panel
-    def setcand(self, thelist=None,tables=False):
-        if tables==True:
-            if not self.current_input:
-                self.setcand()
+    #sets the list of candidates from a list of strings called thelist. if thelist==None then removes the candidate list panel. if justupdate=True then it simply updates what should be shown without needing to change the actual candidate list itself. so if the candidate list doesnt change but you want to change how the panel looks, this is what you want
+    def setcand(self, thelist=None, justupdate=False):
+        if justupdate:
             self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
             return True
         self.lookuptable.clear()
         if thelist!=None:
             num_candidates = 0
             for c in thelist:
-                abcd=self.overarchinglanguage.decoding(c)
-                self.lookuptable.append_candidate(IBus.Text.new_from_string(abcd))
+                self.lookuptable.append_candidate(IBus.Text.new_from_string(c))
                 num_candidates += 1
         self.update_lookup_table(self.lookuptable, self.lookuptable.get_number_of_candidates()>0)
         return True
@@ -221,8 +222,8 @@ class Engine(IBus.Engine):
         if not self.lookuptable.get_number_of_candidates():
             return False
         self.lookuptable.page_down()
-        self.setcand(tables=True)
-        self.showtext(self.current_showtext)
+        #updates lookuptable
+        self.setcand(justupdate=True)
         return True
     #move up the candidate selection list
     def do_page_up(self):
@@ -230,17 +231,18 @@ class Engine(IBus.Engine):
         if not self.lookuptable.get_number_of_candidates():
             return False
         self.lookuptable.page_up()
-        self.setcand(tables=True)
-        self.showtext(self.current_showtext)
+        #updates lookuptable
+        self.setcand(justupdate=True)
         return True
     #return to base state
     def cleareverything(self):
         """Clear the current input."""
         self.current_input = ""
         self.clear_on_next_input = False
-        self.setcand(tables=True)
+        self.updatecandidatelistshortn()
         self.punctuationvariable=None
         self.showtext("")
+        return True
     #this updates the showtext variable and current_input variable. append is what you add to the current_input and current_showtext, drop is how much you remove
     def update_current_input(self, append=None, drop=None):
         if append is not None:
@@ -311,8 +313,8 @@ class EngineShortn(Engine):
         return the
     #once you get 'index' aka number what you do to it aka you choose from the list and input it
     def do_select_candidate(self, index):
-        page_index = self.lookuptable.get_cursor_pos()
-        selected = self.lookuptable.get_candidate(page_index+index-1)
+        #when you move up the candidate list, there's an issue where selecting a candidate doesnt select the right one. it fixes that. basically get_cursor_pos is where the engine situates where the candidate list is shown but it should be a multiple of 9
+        selected = self.lookuptable.get_candidate(9*(self.lookuptable.get_cursor_pos()//9)+index-1)
         if selected!=None:
             #gets from selected from candidate list, turns it into ibus text, decodes, appendables, commits, removes caps, clears everything, if capitalizeaftercommit then purn caps back on and disable capitalizeaftercommit
             b=selected.text
@@ -353,10 +355,22 @@ class EngineShortn(Engine):
             except:
                 return None
         return sug
+    #this is setcand but fit for shortn. setcand is more of a "universal" function without any shortn specific thing or something. updatecandidatelistshortn is setcand but with appendables and decoding at the end 
+    def updatecandidatelistshortn(self):
+        if self.current_input=="":
+            return self.setcand()
+        i=self.shortnenginefunction(self.current_input)
+        if i==None:
+            self.setcand()
+        else:
+            self.setcand([self.appendables(self.overarchinglanguage.decoding(k)) for k in i])
+        return True
+        
     
     #called by ibus do not rename this function. when you type ANY key what to do
     def do_process_key_event(self, keyval, keycode, state):
         #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
+        #normally we should set it to return true but ibus crashes and becomes too annoying if we do so im not sure exactly 
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
         #mechanism for disable toggle. catches it and changes state
@@ -376,6 +390,7 @@ class EngineShortn(Engine):
         if keyval==IBus.KEY_Shift_L:
             self.shifttoggle=self.shifttoggle==False
             self.showtext(self.current_input)
+            self.updatecandidatelistshortn()
             return True
         #if enter/return/newline key pressed then commit it natively aka return false
         elif keyval==IBus.KEY_Return:
@@ -417,6 +432,7 @@ class EngineShortn(Engine):
         if self.capitalizeaftercommit==True:
             self.shifttoggle=True
             self.capitalizeaftercommit=False
+        self.updatecandidatelistshortn()
         return True
     #when inputchar is a punctuation
     #if inputchar is a regular punctuation then make it self.punctuationvariable (the punctuation variable). if current_input is empty then just commit punctuationvariable and call it a day. if current_input is not empty then nothing happens other than self.punctuationvariable being updated accordingly
@@ -435,6 +451,7 @@ class EngineShortn(Engine):
                 self.shifttoggle=True
         else:
             self.showtext(self.current_input)
+        self.updatecandidatelistshortn()
         return True
     
     #if you press delete then either current current_input loses one letter, if punctuationvariable exists then just remove punctuationvariable, if current_input not exist then return false so deletes in the "real world"
@@ -445,8 +462,8 @@ class EngineShortn(Engine):
             self.punctuationvariable=None
         else:
             self.update_current_input(drop=1)
-            self.setcand(self.shortnenginefunction(self.current_input))
         self.showtext(self.current_input)
+        self.updatecandidatelistshortn()
         return True
     #what to do when engine sees you typed a number
     def do_number(self, keyval):
@@ -495,7 +512,7 @@ class EngineShortn(Engine):
         #since inputchar is a regular letter for shortnengine then append it to current_input
         self.update_current_input(append=inputchar)
         #from current_input ask shortnengine for a list of suggestions. if list not empty then display it. then show the current_input.
-        self.setcand(self.shortnenginefunction(self.current_input))
+        self.updatecandidatelistshortn()
         #keep in mind showtext has appendables inside
         self.showtext(self.current_input)
         return True
