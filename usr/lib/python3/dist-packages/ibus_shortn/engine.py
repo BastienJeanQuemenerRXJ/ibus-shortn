@@ -317,10 +317,7 @@ class EngineShortn(Engine):
         selected = self.lookuptable.get_candidate(9*(self.lookuptable.get_cursor_pos()//9)+index-1)
         if selected!=None:
             #gets from selected from candidate list, turns it into ibus text, decodes, appendables, commits, removes caps, clears everything, if capitalizeaftercommit then purn caps back on and disable capitalizeaftercommit
-            b=selected.text
-            b=self.overarchinglanguage.decoding(b)
-            b=self.appendables(b,encodingchange=False)+" "
-            self.commit(b)
+            self.commit(selected.text+" ")
             self.shifttoggle=False
         self.cleareverything()
         #this is the capitalizeaftercommit mechanism. necessary because otherwise if someone types "test." it would capitalize "test" itself, ie typing "test. word " would make "Test. word" which we don't want (we want "test. word "->"test. Word ")
