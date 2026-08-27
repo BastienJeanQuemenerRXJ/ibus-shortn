@@ -35,7 +35,7 @@ gi.require_version('IBus','1.0')
 from gi.repository import Gio
 from gi.repository import IBus
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-"""
+
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -43,7 +43,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-"""
+
 #this defines how to handle the localization of languages in terms of shortn engine
 #yes, it's better to convert every non basic latin unicode character into a basic latin character by using upper case basic latin (ie a:a, é:A) because it massively helps on dictionary size and reduces encodign issues. there's no issue since the base input is converted first into lowercase, then into the injective latin set, engineshortn uses it, gives you a list of suggestions, decode it back into original language(ie encodedfrench to regular french) and then uses appendables (capitalization, punctuation etc)
 #so
@@ -263,7 +263,7 @@ class EngineShortn(Engine):
     #the global punctuation variable
     punctuationvariable=None
     #the "when you press esc it "disables" the engine" variable
-    escapetoggle=True
+    disabletoggle=True
     #the capitalization system variable
     shifttoggle=False
     #when you type . or ! or ? it capitalizes the word after, it needs a new variable to do that
@@ -322,7 +322,7 @@ class EngineShortn(Engine):
             self.shifttoggle=False
         self.cleareverything()
         #this is the capitalizeaftercommit mechanism. necessary because otherwise if someone types "test." it would capitalize "test" itself, ie typing "test. word " would make "Test. word" which we don't want (we want "test. word "->"test. Word ")
-        if self.capitalizeaftercommit==True:
+        if self.capitalizeaftercommit:
             self.shifttoggle=True
             self.capitalizeaftercommit=False
         return True
@@ -330,8 +330,7 @@ class EngineShortn(Engine):
     def do_candidate_clicked(self, index, button, state):
         self.do_select_candidate(index+1)
     #from a word you get the last vowel aka type "hosptla" you get "a"
-    def getlastvowel(self, inpp):
-        inp=inpp
+    def getlastvowel(self, inp):
         a=[i for i in inp if i in self.overarchinglanguage.encodedvowel]
         if len(a)>1:
             return a[-1]
@@ -360,15 +359,15 @@ class EngineShortn(Engine):
         #ignore key release events AND ALSO PREVENTS KEYS GETTING "BOUNCED" IE IF U PRESS A KEY ONCE IT REGISTERS MULTIPLE TIMES. ie IT DEBOUNCES
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
-        #mechanism for escape toggle. catches it and changes state
-        if keyval==IBus.Escape:
-            self.escapetoggle= not self.escapetoggle
+        #mechanism for disable toggle. catches it and changes state
+        if keyval == IBus.KEY_space and state & IBus.ModifierType.SHIFT_MASK:
+            self.disabletoggle= not self.disabletoggle
             if self.current_input!="":
                 self.commit(self.overarchinglanguage.decoding(self.current_input))
             self.cleareverything()
             return True
-        #mechanism for escape toggle. if on, then return all false
-        if not self.escapetoggle:
+        #mechanism for disable toggle. if on, then return all false
+        if not self.disabletoggle:
             return False
         # Ignore Alt+<key> and Ctrl+<key>
         elif state & (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |IBus.ModifierType.MOD4_MASK):
@@ -462,6 +461,7 @@ class EngineShortn(Engine):
     #after do_process_key_event and you know it's a regular key so what to do with it
     def do_regular_key(self, inputchar):
         #if the thing is a number then treat it like selecting candidate index
+        #this try except method is the best way to check if a str is a number
         try:
             a=int(inputchar)
             return self.do_number(a)
