@@ -1,23 +1,3 @@
-# Copyright (c) 2026 - Bastien Jean Quemener <shortn@bastien.live>  (github.com/BastienJeanQuemerRXJ/ibus-shortn)
-#
-# This file is part of ibus-shortn, the IBus Shortn input method engine, forked from ibus-cangjie.
-#
-# ibus-shortn is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# ibus-shortn is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with ibus-shortn.  If not, see <http://www.gnu.org/licenses/>.
-
-
-
-
 #this defines how to handle the localization of languages in terms of shortn engine
 #yes, it's better to convert every non basic latin unicode character into a basic latin character by using upper case basic latin (ie a:a, é:A) because it massively helps on dictionary size and reduces encodign issues. there's no issue since the base input is converted first into lowercase, then into the injective latin set, engineshortn uses it, gives you a list of suggestions, decode it back into original language(ie encodedfrench to regular french) and then uses appendables (capitalization, punctuation etc)
 #so
@@ -56,7 +36,7 @@ class language:
     def encoding(self, the):
         a=""
         for i in the:
-            #if it can't find it then use 'i'  (    fyi  thing.get(a,b) returns b if thing.get(a) doesn't exist
+            #if it can't find it then use 'i'  (    fyi  thing.get(a,b) returns b if thing.get(a) doesn't exist)
             a+= self.originalalphabetuppercasetolowercase.get(i,i)
         the=a
         a=""
@@ -69,16 +49,23 @@ class language:
         for i in the:
             a+= self.decodelist.get(i,i)
         return a
+    #initializes the language and dictionary based on engine name 'selfname' variable
     def givelanguageanddic(selfname):
+        #if engine name is shortn then language is english, if not then it has to be of the form shortnLC, so cut down "shortn" to get LC which is the language code (fr, ru, de,es...)
+        #overarchinglanguage is the language that the engine uses, dynamically changes whenever you change engine (shortnes->shortnfr etc). global variable
+        #this is how we get the language code
         langcode= "en" if  selfname == "shortn" else selfname[6:]
         #getting the language config and loading it 
         import json
-        with open("/usr/lib/python3/dist-packages/ibus_shortn/"+langcode+"-config.json", 'r') as a:
+        with open("/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"+langcode+"-config.json", 'r') as a:
             a=json.load(a)
             overarchinglanguage=language(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8])
             del a
-        #obtaining the dictionary list and loading it
-        with open("/usr/lib/python3/dist-packages/ibus_shortn/"+langcode+".json", 'r') as a:
-            dic=json.load(a)
-            del a
+        try:
+            #obtaining the dictionary list and loading it
+            with open("/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"+langcode+".json", 'r') as a:
+                dic=json.load(a)
+                del a
+        except:
+            dic="dic not found"
         return overarchinglanguage, dic, langcode
