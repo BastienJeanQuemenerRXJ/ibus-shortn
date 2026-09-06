@@ -23,7 +23,7 @@ vs
 * pressing ,.;:!? before validating your word will add it after your word and then add a space.  ie,  typing "humnty,1" will give "humanity, "
 * pressing .!? specifically will capitalize the next word automatically, ie typing "undrsttd.1hello " will give "understated. Hello "
 * pressing -_space before validating a word will automatically commit what you exactly inputted but capitalized and with the punctuation at the end.
-
+* to add a word to the dictionary, type the full word (ie:"malware") and press 0.
 
 
 
