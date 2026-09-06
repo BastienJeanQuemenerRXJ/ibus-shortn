@@ -37,13 +37,11 @@ def logwrite(the, e=0):
         f.writelines(the)
 """      
 #import languageclassfile which does all the language config stuff
-#not needed if it's only imported
-"""
+
 try:
     from .languageclassfile import language  
 except :
     from languageclassfile import language
-"""
 
 #since we mostly import make_dict we need to make a class
 class add_to_dic_class:
