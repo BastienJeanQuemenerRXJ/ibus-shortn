@@ -414,7 +414,7 @@ class EngineShortn(Engine):
     #what to do when engine sees you typed a number
     def do_number(self, keyval):
         #this is the thing to add a word to the dictionary natively when pressing 0
-        if keyval==0:
+        if keyval==0 and self.current_input!="":
             try:
                 from .make_dict import add_to_dic_class
                 add_to_dic_class.whattodo("add",[self.current_input], self.overarchinglanguage.dictionaryname[:-5])
