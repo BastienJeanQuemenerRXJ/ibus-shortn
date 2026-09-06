@@ -51,6 +51,7 @@ def logwrite(the, e=0):
 try:
     from .languageclassfile import language  
 except Exception as p:
+    logwrite("here1")
     logwrite(p, e=1)
 
 #the shortn engine. this is also the english (en) english because '''$ibus engine shortn''' has to return something instead of being only able to command '''ibus engine shortnen''' (shortnen as an engine doesn't exist by convention)
@@ -413,11 +414,19 @@ class EngineShortn(Engine):
         return True
     #what to do when engine sees you typed a number
     def do_number(self, keyval):
+        #this is the thing to add a word to the dictionary natively when pressing 0
+        if keyval==0:
+            try:
+                from .make_dict import add_to_dic_class
+                add_to_dic_class.whattodo("add",[self.current_input], self.overarchinglanguage.dictionaryname[:-5])
+            except Exception as p:
+                logwrite("here2")
+                logwrite(p, e=1)
+            self.cleareverything
+            return True
+        #get candidate list
         if self.lookuptable.get_number_of_candidates():
-            if keyval==0:
-                return False
-            else:
-                return self.do_select_candidate(keyval)
+            return self.do_select_candidate(keyval)
         return False
 
         

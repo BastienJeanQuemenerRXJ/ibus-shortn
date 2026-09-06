@@ -41,20 +41,26 @@ class language:
         the=a
         a=""
         for i in the:
-            a+= self.encodelist.get(i,i)
+            try:
+                a+= self.encodelist.get(i,i)
+            except:
+                a+=i
         return a
     #decodes
     def decoding(self, the):
         a=""
         for i in the:
-            a+= self.decodelist.get(i,i)
+            try:
+                a+= self.decodelist.get(i,i)
+            except:
+                a+=i
         return a
     #initializes the language and dictionary based on engine name 'selfname' variable
     def givelanguageanddic(selfname):
         #if engine name is shortn then language is english, if not then it has to be of the form shortnLC, so cut down "shortn" to get LC which is the language code (fr, ru, de,es...)
         #overarchinglanguage is the language that the engine uses, dynamically changes whenever you change engine (shortnes->shortnfr etc). global variable
         #this is how we get the language code
-        langcode= "en" if  selfname == "shortn" else selfname[6:]
+        langcode= "en" if  selfname == "shortn" or selfname=="shortnen" else selfname[6:]
         #getting the language config and loading it 
         import json
         with open("/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"+langcode+"-config.json", 'r') as a:
