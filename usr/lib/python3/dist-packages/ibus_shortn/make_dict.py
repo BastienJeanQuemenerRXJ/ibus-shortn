@@ -27,6 +27,7 @@ import subprocess
 import tempfile
 import os
 #debug tool
+"""
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -34,14 +35,15 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-        
-#import languageclassfile which does all the language config stuff 
+"""      
+#import languageclassfile which does all the language config stuff
+#not needed if it's only imported
+"""
 try:
     from .languageclassfile import language  
-except Exception as p:
-    logwrite("here3")
-    logwrite(p,e=1)
-
+except :
+    from languageclassfile import language
+"""
 
 #since we mostly import make_dict we need to make a class
 class add_to_dic_class:

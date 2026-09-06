@@ -37,7 +37,7 @@ from gi.repository import IBus
 
 
 #this is a debug tool that will write on a txt file called "shortndebug.txt" whatever you ask it to. ie logwrite(the) will write 'the' to shortndebug.txt. however it needs sudo perms and editing files so that's not too appropriate for a public release or something. its uses are still left in the file but commented out in case you are having troubles
-
+"""
 def logwrite(the, e=0):
     #except Exception as the
     if e==1:
@@ -45,14 +45,13 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-        
+"""        
         
 #import languageclassfile which does all the language config stuff 
 try:
     from .languageclassfile import language  
 except Exception as p:
-    logwrite("here1")
-    logwrite(p, e=1)
+    from languageclassfile import language
 
 #the shortn engine. this is also the english (en) english because '''$ibus engine shortn''' has to return something instead of being only able to command '''ibus engine shortnen''' (shortnen as an engine doesn't exist by convention)
 class Engine(IBus.Engine):
@@ -420,8 +419,8 @@ class EngineShortn(Engine):
                 from .make_dict import add_to_dic_class
                 add_to_dic_class.whattodo("add",[self.current_input], self.overarchinglanguage.dictionaryname[:-5])
             except Exception as p:
-                logwrite("here2")
-                logwrite(p, e=1)
+                p="failed to add to dictionary because of "+getattr(p, 'message', repr(p))
+                self.commit(p)
             self.cleareverything
             return True
         #get candidate list
