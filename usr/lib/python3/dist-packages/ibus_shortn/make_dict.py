@@ -37,16 +37,17 @@ def logwrite(the, e=0):
         f.writelines(the)
 """      
 #import languageclassfile which does all the language config stuff
-
 try:
     from .languageclassfile import language  
 except :
     from languageclassfile import language
+# dotlanguageclassfile vs languageclassfile is when running as an app vs as a singular file
 
 #since we mostly import make_dict we need to make a class
 class add_to_dic_class:
     def __init__(self):
         True
+    #wordlist is a [list] of words, langcode is the code (ie "en", "fr", etc) that is used for lang config stuff. addingto is if the dictionary already exists or start fresh. returns the dic
     def generate_shortcut( wordlist,langcode, addingto={"lolcn":["pedophile", "lolicon"]}):
         overarchinglanguage=language.givelanguageanddic("shortn"+langcode)[0]
         dicvar=addingto
@@ -65,6 +66,9 @@ class add_to_dic_class:
             except:
                 dicvar[ret]=[word]
         return dicvar
+    #call this to actually do something. action is either "build" aka make dic from fresh. or "add" aka add to a preexisting dictionary
+    #toadd is the actual content to write as a [a:[b,c], d:[e,f]] list
+    #directory is where to write, default to write for usr/lib config for preinstalled to add to dictionary
     def whattodo( action, toadd, langcode, directory="/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"):
         #action=="build", action=="add"
         #if action=="add" then toadd is already a list. if action=="build" then toadd is anything
