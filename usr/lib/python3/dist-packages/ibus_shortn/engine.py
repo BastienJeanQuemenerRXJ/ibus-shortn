@@ -416,11 +416,12 @@ class EngineShortn(Engine):
         #this is the thing to add a word to the dictionary natively when pressing 0
         if keyval==0 and self.current_input!="":
             try:
+                #import make_dict stuff and run whattodo  as "add", with current_input and take the overarchinglangauge's languagecode
                 from .make_dict import add_to_dic_class
                 add_to_dic_class.whattodo("add",[self.current_input], self.overarchinglanguage.dictionaryname[:-5])
             except Exception as p:
-                p="failed to add to dictionary because of "+getattr(p, 'message', repr(p))
-                self.commit(p)
+                #error message to commit directly
+                self.commit("failed to add to dictionary because of "+getattr(p, 'message', repr(p)))
             self.cleareverything
             return True
         #get candidate list
