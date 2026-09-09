@@ -2,7 +2,8 @@
 A deterministic IME to type faster in alphabetic-using languages containing on average more consonants than vowels per word. gplv3, Forked from ibus-cangjie
 
 
-https://github.com/user-attachments/assets/6dd0051c-056c-4096-b4c7-c2123ab6a111
+https://github.com/user-attachments/assets/cd71ae33-8542-4c7f-8e2b-ab445d75c000
+
 
 The Shortn algorithm and its IME is quite simple. Type the word you want, but without all the vowels, except the first one, if there are too many results, type the last vowel at the end to refine them, then select it.
 
@@ -70,3 +71,4 @@ will add fedora and arch soon
 
  You should have received a copy of the GNU General Public License
  along with ibus-shortn.  If not, see <http://www.gnu.org/licenses/>.
+
