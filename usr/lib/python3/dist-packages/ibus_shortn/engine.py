@@ -106,10 +106,10 @@ class Engine(IBus.Engine):
         if not noencoding:
             thestr=self.appendables(thestr)
         text = IBus.Text.new_from_string(thestr)
-        super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
-        # We don't use pre-edit at all for Shortn or Quick. However, some applications (most notably Firefox) fail to correctly position the candidate popup, as if they got confused by the absence of a pre-edit text. fix this 
+        #additional field that shows a text at the top of the suggestion list. functions similarly to preedit text. not used because less clutter the better
+        #super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
         if thestr:
-            super(Engine, self).update_preedit_text(IBus.Text.new_from_string('\u200B'), 0, True)
+            super(Engine, self).update_preedit_text(IBus.Text.new_from_string('['+self.appendables(self.current_input)+']'), 0, True)
         else:
             super(Engine, self).update_preedit_text(IBus.Text.new_from_string(''), 0, False)
     
