@@ -427,6 +427,7 @@ class EngineShortn(Engine):
         if keyval==0 and self.current_input!="":
             #uses auxiliary text to show the message
             self.showtext("will try adding " +self.appendables(self.current_input)+ "  to language dictionary :" + self.overarchinglanguage.dictionaryname+" .  make sure the word you typed is the full one, ie 'absolutely' instead of 'absltl' ", noencoding=True, auxiliary=True)
+            time.sleep(2)
             try:
                 #import make_dict stuff and run whattodo  as "add", with current_input and take the overarchinglangauge's languagecode
                 from .make_dict import add_to_dic_class
@@ -434,8 +435,7 @@ class EngineShortn(Engine):
             except Exception as p:
                 #error message to commit directly
                 self.commit("failed to add: "+ self.overarchinglanguage.decoding(self.current_input)+ " with encoded value of: " + self.current_input+" to dictionary because of "+getattr(p, 'message', repr(p))+" .   please contact bastien@shortn.live or add it as an issue on the github repo : github.com/BastienJeanQuemenerRXJ/ibus-shortn   if necessary")
-            self.cleareverything
-            self.showtext(self.overarchinglanguage.decoding(self.current_input)+ " successfully added to " +self.overarchinglanguage.dictionaryname, noencoding=True, auxiliary=True)
+            self.cleareverything            
             return True
         #get candidate list if number not 0
         if self.lookuptable.get_number_of_candidates():
