@@ -45,7 +45,7 @@ def logwrite(the, e=0):
     the=str(the)
     with open('/home/bastien/Desktop/shortndebug.txt', 'a', encoding='utf-8') as f:
         f.writelines(the)
-"""        
+"""
         
 #import languageclassfile which does all the language config stuff 
 try:
@@ -102,17 +102,23 @@ class Engine(IBus.Engine):
     #self.current_showtext    this is the name of what's being shown in the editable text input
     #shows you thestr in the edit window. keep in mind that what's shown is ran through appendables so for example if thestr=hosptl and shifttoggle is on and punctuationvariable is "," then what's shown is "Hosptl,". albeit be aware that shortnengine does NOT see "Hosptl," it will always only see "hosptl"
     #setting noencoding to True prevents the appendables
-    def showtext(self, thestr, noencoding=False):
+    #also has the option to show the auxiliary text which is used for the ui for adding a word to dictionary
+    def showtext(self, thestr, noencoding=False, auxiliary=False):
         if not noencoding:
             thestr=self.appendables(thestr)
-        text = IBus.Text.new_from_string(thestr)
+        #adding a space at the end and converting to ibus text unless thestr is empty. in that case no appending space
+        if thestr!="":
+            thestr+=" "
+        thestr = IBus.Text.new_from_string(thestr)
         #additional field that shows a text at the top of the suggestion list. functions similarly to preedit text. not used because less clutter the better
-        #super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
+        if auxiliary:
+            super(Engine, self).update_auxiliary_text(thestr, True)
+            return True
         if thestr:
-            super(Engine, self).update_preedit_text(IBus.Text.new_from_string(self.appendables(self.current_input)), len(self.current_input), True)
+            super(Engine, self).update_preedit_text(thestr, 0, True)
         else:
-            super(Engine, self).update_preedit_text(IBus.Text.new_from_string(''), 0, False)
-    
+            super(Engine, self).update_preedit_text(IBus.Text.new_from_string('how did you get here'), 0, False)
+
 
     #sets the list of candidates from a list of strings called thelist. if thelist==None then removes the candidate list panel. if justupdate=True then it simply updates what should be shown without needing to change the actual candidate list itself. so if the candidate list doesnt change but you want to change how the panel looks, this is what you want
     def setcand(self, thelist=None, justupdate=False):
@@ -153,8 +159,10 @@ class Engine(IBus.Engine):
     def init_shortn(self):
         version = self.settings.get_int("version")
     #came from ibus-cangjie. idk what this really does. i'm guessing if something goes bad to recreate (restart) the engines. idk
+    #if something changed then clear the current_input things and suggestion etc
     def on_value_changed(self, settings, key):
         # Only recreate the Shortn object if necessary
+        self.cleareverything()
         return True
     #Handle focus out event. This happens, for example, when switching between application windows or input contexts. Such events should clear the current input.
     def do_focus_out(self):
@@ -338,8 +346,10 @@ class EngineShortn(Engine):
             self.showtext(self.current_input)
             self.updatecandidatelistshortn()
             return True
-        #if enter/return/newline key pressed then commit it natively aka return false
+        #if enter/return/newline key pressed then commit current_input with appendables but without space, then commit "enter" natively aka return false
         elif keyval==IBus.KEY_Return:
+            self.commit(self.appendables(self.current_input))
+            self.cleareverything()
             return False
         #if you click on the page up or down button then it moves up and down the suggestion list since candidates shown is limited to 9
         if keyval == IBus.Page_Down:
@@ -415,10 +425,12 @@ class EngineShortn(Engine):
     def do_number(self, keyval):
         #this is the thing to add a word to the dictionary natively when pressing 0
         if keyval==0 and self.current_input!="":
+            #uses auxiliary text to show the message
+            self.showtext("will try adding " +self.appendables(self.current_input)+ " . to language dictionary :" + self.overarchinglanguage.dictionaryname, noencoding=True, auxiliary=True)
             try:
                 #import make_dict stuff and run whattodo  as "add", with current_input and take the overarchinglangauge's languagecode
                 from .make_dict import add_to_dic_class
-                add_to_dic_class.whattodo("add",[self.current_input], self.overarchinglanguage.dictionaryname[:-5])
+                add_to_dic_class.whattodo("add",[self.overarchinglanguage.decoding(self.current_input)], self.overarchinglanguage.dictionaryname[:-5])
             except Exception as p:
                 #error message to commit directly
                 self.commit("failed to add to dictionary because of "+getattr(p, 'message', repr(p)))
