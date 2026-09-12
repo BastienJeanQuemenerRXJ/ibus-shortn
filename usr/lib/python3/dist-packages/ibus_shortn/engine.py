@@ -426,7 +426,7 @@ class EngineShortn(Engine):
         #this is the thing to add a word to the dictionary natively when pressing 0
         if keyval==0 and self.current_input!="":
             #uses auxiliary text to show the message
-            self.showtext("will try adding " +self.appendables(self.current_input)+ "  to language dictionary :" + self.overarchinglanguage.dictionaryname+" .  make sure the word you typed is the full one, ie 'absolutely' instead of 'absltl' ", noencoding=True, auxiliary=True)
+            self.showtext("will try adding " +self.appendables(self.current_input)+ "  to language dictionary :" + self.overarchinglanguage.dictionaryname+" .  make sure the word you typed is the full one, ie 'absolutely' instead of 'absltl'   . if this message doesn't disappear after 2 seconds then disable and reenable the current engine (space+shift)", noencoding=True, auxiliary=True)
             time.sleep(2)
             try:
                 #import make_dict stuff and run whattodo  as "add", with current_input and take the overarchinglangauge's languagecode
