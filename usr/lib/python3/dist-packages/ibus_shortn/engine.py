@@ -109,7 +109,7 @@ class Engine(IBus.Engine):
         #additional field that shows a text at the top of the suggestion list. functions similarly to preedit text. not used because less clutter the better
         #super(Engine, self).update_auxiliary_text(text, len(thestr)>0)
         if thestr:
-            super(Engine, self).update_preedit_text(IBus.Text.new_from_string(self.appendables(self.current_input)), 0, True)
+            super(Engine, self).update_preedit_text(IBus.Text.new_from_string(self.appendables(self.current_input)), len(self.current_input)-1, True)
         else:
             super(Engine, self).update_preedit_text(IBus.Text.new_from_string(''), 0, False)
     
