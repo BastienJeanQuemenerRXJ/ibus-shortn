@@ -18,7 +18,7 @@
 
 cd ~/Desktop/'the shortn projct'
 sudo rm -rf ibus-shortn/ibus-shortn.deb
-cp -r ibus-shortn ibus-shortn-clean
+rsync -av --exclude='.git' ibus-shortn/ ibus-shortn-clean/
 find ibus-shortn-clean -name '.git*' -exec rm -rf {} + 2>/dev/null
 find ibus-shortn-clean -name '*.deb' -delete
 find ibus-shortn-clean -name '*.swp' -delete

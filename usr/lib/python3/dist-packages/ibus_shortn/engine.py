@@ -109,15 +109,15 @@ class Engine(IBus.Engine):
         #adding a space at the end and converting to ibus text unless thestr is empty. in that case no appending space
         if thestr!="":
             thestr+=" "
+        #gets the length of thestr before converting to ibus text
+        thelen=len(thestr)>0
         thestr = IBus.Text.new_from_string(thestr)
         #additional field that shows a text at the top of the suggestion list. functions similarly to preedit text. not used because less clutter the better
+        #the 'len(thestr)>0' is True if thestr has more than 0 characters, false otherwise. if false, then super update text will update text to show nothing. if true, will show the text
         if auxiliary:
-            super(Engine, self).update_auxiliary_text(thestr, True)
+            super(Engine, self).update_auxiliary_text(thestr, thelen)
             return True
-        if thestr:
-            super(Engine, self).update_preedit_text(thestr, 0, True)
-        else:
-            super(Engine, self).update_preedit_text(IBus.Text.new_from_string('how did you get here'), 0, False)
+        super(Engine, self).update_preedit_text(thestr, 0, thelen)
 
 
     #sets the list of candidates from a list of strings called thelist. if thelist==None then removes the candidate list panel. if justupdate=True then it simply updates what should be shown without needing to change the actual candidate list itself. so if the candidate list doesnt change but you want to change how the panel looks, this is what you want
@@ -199,6 +199,7 @@ class Engine(IBus.Engine):
         self.updatecandidatelistshortn()
         self.punctuationvariable=None
         self.showtext("")
+        self.showtext("",auxiliary=True)
         return True
     #this updates the showtext variable and current_input variable. append is what you add to the current_input and current_showtext, drop is how much you remove
     def update_current_input(self, append=None, drop=None):
@@ -221,7 +222,7 @@ class EngineShortn(Engine):
     __name__ = "shortn"
     #the global punctuation variable
     punctuationvariable=None
-    #the "when you press esc it "disables" the engine" variable
+    #the "when you press shift+space it "disables" the engine" variable
     disabletoggle=True
     #the capitalization system variable
     shifttoggle=False
@@ -359,6 +360,10 @@ class EngineShortn(Engine):
         #if you press delete then either current current_input loses one letter, if punctuationvariable exists then just remove punctuationvariable, if current_input not exist then return false so deletes in the "real world"
         elif keyval == IBus.BackSpace:
             return self.do_backspace()
+        #pressing escape returns escape but also clears everything
+        elif keyval==IBus.Escape:
+            self.cleareverything()
+            return False
         #turns keyval from an ibus text to a regular text. IBus.space !=" " automatically
         elif keyval==IBus.space:
             keyval=" "
@@ -421,12 +426,29 @@ class EngineShortn(Engine):
         self.showtext(self.current_input)
         self.updatecandidatelistshortn()
         return True
+    #small shortn function such that it makes hospital->hosptl
+    def smallshortn(self,the):
+        vowc=True
+        ret=""
+        for i in the:
+            if i in self.overarchinglanguage.encodedvowel and vowc:
+                vowc=False
+                ret+=i
+            elif i not in self.overarchinglanguage.encodedvowel:
+                ret+=i
+        return ret
     #what to do when engine sees you typed a number
     def do_number(self, keyval):
         #this is the thing to add a word to the dictionary natively when pressing 0
         if keyval==0 and self.current_input!="":
+            #checks if already present
+            if self.shortnenginefunction(self.smallshortn(self.current_input))!=None and self.current_input in self.shortnenginefunction(self.smallshortn(self.current_input)):
+                #uses auxiliary text to show the message
+                self.showtext("word '"+self.current_input+"' is already present! press ESC to make this message disappear", noencoding=True, auxiliary=True)
+                return True
+
             #uses auxiliary text to show the message
-            self.showtext("will try adding " +self.appendables(self.current_input)+ "  to language dictionary :" + self.overarchinglanguage.dictionaryname+" .  make sure the word you typed is the full one, ie 'absolutely' instead of 'absltl'   . if this message never disappears then disable and reenable the current engine (space+shift)", noencoding=True, auxiliary=True)
+            self.showtext("will try adding " +self.overarchinglanguage.decoding(self.smallshortn(self.current_input))+ "->" + self.overarchinglanguage.decoding(self.current_input)+"  to language dictionary :" + self.overarchinglanguage.dictionaryname+" .  make sure the word you typed is the full one, ie 'absolutely' instead of 'absltl'. press ESC to make this message disappear", noencoding=True, auxiliary=True)
             try:
                 #import make_dict stuff and run whattodo  as "add", with current_input and take the overarchinglangauge's languagecode
                 from .make_dict import add_to_dic_class
