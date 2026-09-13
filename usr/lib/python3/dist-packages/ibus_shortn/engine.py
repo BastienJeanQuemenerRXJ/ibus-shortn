@@ -447,7 +447,7 @@ class EngineShortn(Engine):
             #checks if already present
             if self.shortnenginefunction(self.smallshortn(self.current_input))!=None and self.current_input in self.shortnenginefunction(self.smallshortn(self.current_input)):
                 #uses auxiliary text to show the message
-                self.showtext("word '"+self.current_input+"' is already present! press ESC to make this message disappear", noencoding=True, auxiliary=True)
+                self.showtext("word '"+self.overarchinglanguage.decoding(self.current_input)+"' is already present! press ESC to make this message disappear", noencoding=True, auxiliary=True)
                 return True
 
             #uses auxiliary text to show the message
