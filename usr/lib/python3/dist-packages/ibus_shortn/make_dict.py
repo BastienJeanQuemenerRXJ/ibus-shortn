@@ -52,15 +52,15 @@ class add_to_dic_class:
         overarchinglanguage=language.givelanguageanddic("shortn"+langcode)[0]
         dicvar=addingto
         for word in wordlist:
-            vowc=0
+            vowc=True
             ret=""
             word=overarchinglanguage.encoding(word)
             for i in word:
-                if i in overarchinglanguage.encodedvowel and vowc!=1:
+                if i not in overarchinglanguage.encodedvowel:
                     ret+=i
-                    vowc+=1
-                elif i not in overarchinglanguage.encodedvowel:
+                elif vowc:
                     ret+=i
+                    vowc=False
             try:
                 dicvar[ret]+=[word]
             except:

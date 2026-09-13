@@ -368,10 +368,13 @@ class EngineShortn(Engine):
         elif keyval==IBus.space:
             keyval=" "
         else:
+            #if not space then:
             try:
+                #converts to regular str text 
                 keyval=IBus.keyval_to_unicode(keyval)
             except:
-                True  
+                True
+        #if space then return " " if not then return str of keyval
         return self.do_regular_key(keyval)
     #what to do when the entered key is a word separator (ie -, _, space) now it functions like regular punctuation but it just commits directly. the use case is to not have to remove space
     def do_wordseparator(self,entered_word_separator):
