@@ -455,7 +455,7 @@ class EngineShortn(Engine):
                 add_to_dic_class.whattodo("add",[self.overarchinglanguage.decoding(self.current_input)], self.overarchinglanguage.dictionaryname[:-5])
             except Exception as p:
                 #error message to commit directly
-                self.commit("failed to add: "+ self.overarchinglanguage.decoding(self.current_input)+ " with encoded value of: " + self.current_input+" to dictionary because of "+getattr(p, 'message', repr(p))+" .   please contact bastien@shortn.live or add it as an issue on the github repo : github.com/BastienJeanQuemenerRXJ/ibus-shortn   if necessary")
+                self.showtext("failed to add: "+ self.overarchinglanguage.decoding(self.current_input)+ " with encoded value of: " + self.current_input+" to dictionary because of "+getattr(p, 'message', repr(p))+" .   please contact bastien@shortn.live or add it as an issue on the github repo : github.com/BastienJeanQuemenerRXJ/ibus-shortn   if necessary. press ESC to make this message disappear", noencoding=True, auxiliary=True)
             self.cleareverything            
             return True
         #get candidate list if number not 0
