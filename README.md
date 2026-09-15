@@ -2,7 +2,7 @@
 A deterministic IME to type faster in alphabetic-using languages containing on average more consonants than vowels per word. gplv3, Forked from ibus-cangjie
 
 
-https://github.com/user-attachments/assets/cd71ae33-8542-4c7f-8e2b-ab445d75c000
+https://github.com/user-attachments/assets/bdb4a93e-82b8-46ae-9687-757a2ffdff90
 
 
 The Shortn algorithm and its IME is quite simple. Type the word you want, but without all the vowels, except the first one, if there are too many results, type the last vowel at the end to refine them, then select it.
@@ -23,7 +23,7 @@ vs
 * pressing left shift makes it such that the first letter of your word will be capitalized. right shift functions normally (ie pressing right shift +1 makes ! but right shift +a still makes a, it doesn't capitalize).
 * pressing ,.;:!? before validating your word will append to it with a space. ie, typing "humnty,1" will give "humanity, "
 * pressing .!? specifically will capitalize the next word automatically, ie typing "undrsttd.1hello " will give "understated. Hello "
-* pressing enter-_space before validating a word will automatically commit what you exactly inputted but capitalized and with the punctuation at the end.
+* pressing -_space before validating a word will automatically commit what you exactly inputted but capitalized and with the punctuation at the end.
 * to add a word to the dictionary, type the full word (ie:"malware") and press 0.
 
 
@@ -71,4 +71,5 @@ will add fedora and arch soon
 
  You should have received a copy of the GNU General Public License
  along with ibus-shortn. If not, see <http://www.gnu.org/licenses/>.
+
 
