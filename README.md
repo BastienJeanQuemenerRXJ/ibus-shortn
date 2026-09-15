@@ -23,7 +23,7 @@ vs
 * pressing left shift makes it such that the first letter of your word will be capitalized. right shift functions normally (ie pressing right shift +1 makes ! but right shift +a still makes a, it doesn't capitalize).
 * pressing ,.;:!? before validating your word will append to it with a space. ie, typing "humnty,1" will give "humanity, "
 * pressing .!? specifically will capitalize the next word automatically, ie typing "undrsttd.1hello " will give "understated. Hello "
-* pressing -_space before validating a word will automatically commit what you exactly inputted but capitalized and with the punctuation at the end.
+* pressing enter-_space before validating a word will automatically commit what you exactly inputted but capitalized and with the punctuation at the end.
 * to add a word to the dictionary, type the full word (ie:"malware") and press 0.
 
 
