@@ -1,3 +1,27 @@
+# Copyright (c) 2026 - Bastien Jean Quemener <shortn@bastien.live>  (github.com/BastienJeanQuemerRXJ/ibus-shortn)
+#
+# This file is part of ibus-shortn, the IBus Shortn input method engine, forked from ibus-cangjie.
+#
+# ibus-shortn is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# ibus-shortn is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ibus-shortn.  If not, see <http://www.gnu.org/licenses/>.
+
+
+#add here
+#if .json file doesnt exist, look for a .txt file of the same name
+#if exists, check to see if it has windows or unix style ending  (\n) instead of (\r\n)
+#then check to see if accents in the file, if yes check if they are one character instead of two  (ie nfc accents)
+#then convert to json
+
 #this defines how to handle the localization of languages in terms of shortn engine
 #yes, it's better to convert every non basic latin unicode character into a basic latin character by using upper case basic latin (ie a:a, é:A) because it massively helps on dictionary size and reduces encodign issues. there's no issue since the base input is converted first into lowercase, then into the injective latin set, engineshortn uses it, gives you a list of suggestions, decode it back into original language(ie encodedfrench to regular french) and then uses appendables (capitalization, punctuation etc)
 #so
