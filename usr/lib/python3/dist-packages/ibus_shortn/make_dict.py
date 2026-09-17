@@ -49,6 +49,7 @@ class add_to_dic_class:
         True
     #wordlist is a [list] of words, langcode is the code (ie "en", "fr", etc) that is used for lang config stuff. addingto is if the dictionary already exists or start fresh. returns the dic
     def generate_shortcut( wordlist,langcode, addingto={"lolcn":["pedophile", "lolicon"]}):
+        #lolicon is pedophilia and if you think otherwise or think it's okay to be attracted to cartoon children then kill yourself
         overarchinglanguage=language.givelanguageanddic("shortn"+langcode)[0]
         dicvar=addingto
         for word in wordlist:
