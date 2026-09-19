@@ -52,19 +52,22 @@ class add_to_dic_class:
         overarchinglanguage=language.givelanguageanddic("shortn"+langcode)[0]
         dicvar=addingto
         for word in wordlist:
-            vowc=True
+            vowc=0
             ret=""
             word=overarchinglanguage.encoding(word)
             for i in word:
                 if i not in overarchinglanguage.encodedvowel:
                     ret+=i
-                elif vowc:
-                    ret+=i
-                    vowc=False
-            try:
-                dicvar[ret]+=[word]
-            except:
-                dicvar[ret]=[word]
+                else:
+                    vowc+=1
+                    if vowc==1:
+                        ret+=i
+            #only add words with more than 1 vowel. otherwise no use for having them on shortn. since as much keys stroked without. still keep 2 vowels because since shortn automatically adds a space you still stroke one less key. ie "helpng1"->"helping " : one less key
+            if vowc>1:
+                try:
+                    dicvar[ret]+=[word]
+                except:
+                    dicvar[ret]=[word]
         return dicvar
     #the function to actually do stuff. action=="build" makes you write from fresh. action=="add" makes you add on to a preexisting dictionary. toadd is the content to add to use to build. directory is by default the /usr/lib one. this is to allow it to add a word to a dictionary for a user. 
     def whattodo( action, toadd, langcode, directory="/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"):
@@ -84,8 +87,9 @@ class add_to_dic_class:
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp:
             json.dump(final, temp)
             temp_path = temp.name
-        # Use pkexec to move file with root privileges to directory/langcode.json  and give it read rights for anyone 
+        # Use pkexec to move file with root privileges to directory/langcode.json  and give it read rights for anyone
+        import shlex
         subprocess.run(['pkexec', 'sh', '-c',f'mv {shlex.quote(temp_path)} {shlex.quote(f"{directory}{langcode}.json")} 'f'&& chmod 644 {shlex.quote(f"{directory}{langcode}.json")}'],check=True)
         return True
-    
+#TO build a dictionary:
 #add_to_dic_class.whattodo("build", 1, "fr", directory="/home/bastien/Desktop/the shortn projct/ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn/languagelist/")

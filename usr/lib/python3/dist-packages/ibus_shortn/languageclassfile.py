@@ -101,5 +101,5 @@ class language:
                 dic=json.load(a)
                 del a
         except Exception as p:
-            return logwrite(p,e=1)
+            dic={"not_found!"}
         return overarchinglanguage, dic, langcode
