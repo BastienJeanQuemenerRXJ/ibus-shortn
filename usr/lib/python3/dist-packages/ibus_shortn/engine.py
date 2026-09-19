@@ -477,7 +477,7 @@ class EngineShortn(Engine):
         except:
             True
         #pressing + or - moves up and down the shown suggestion list since candidates shown is limited to 9
-        if inputchar=="+": return self.do_page_up()
+        if inputchar=="+" or inputchar=="=": return self.do_page_up()
         #commented out because typing "-" is already used as a wordseparator, and moving candidate list is already a niche feature that isn't gonna be used regularly. so having it conflicts with being able to type "-"
         #elif inputchar=="-": return self.do_page_down()
     
