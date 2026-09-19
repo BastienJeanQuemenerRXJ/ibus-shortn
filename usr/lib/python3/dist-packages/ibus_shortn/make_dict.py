@@ -47,7 +47,7 @@ except :
 class add_to_dic_class:
     def __init__(self):
         True
-    #wordlist is a [list] of words, langcode is the code (ie "en", "fr", etc) that is used for lang config stuff. addingto is if the dictionary already exists or start fresh. returns the dic
+    #creates the dictionary variable. wordlist is a [list] of words that are not shortn sorted (ie plain). langcode is the language code, used by using languageclassfile to have proper encoding decoding (injective basic latin set). addingto is to start the dictionary based off of a preexisting dictionary variable
     def generate_shortcut( wordlist,langcode, addingto):
         overarchinglanguage=language.givelanguageanddic("shortn"+langcode)[0]
         dicvar=addingto
@@ -69,16 +69,19 @@ class add_to_dic_class:
                 except:
                     dicvar[ret]=[word]
         return dicvar
-    #the function to actually do stuff. action=="build" makes you write from fresh. action=="add" makes you add on to a preexisting dictionary. toadd is the content to add to use to build. directory is by default the /usr/lib one. this is to allow it to add a word to a dictionary for a user. 
+    #the function to actually do stuff. action=="build" makes you write from fresh. action=="add" makes you add on to a preexisting dictionary. toadd is only used if "add". and it's a plain list of words.. directory is by default the /usr/lib one. this is to allow it to add a word to a dictionary for a user. 
     def whattodo( action, toadd, langcode, directory="/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"):
+        #open langcode-list.json, and make that toadd
         if action=="build":
             with open(directory+langcode+"-list.json",'r') as dictoaddto:
                 toadd= json.load(dictoaddto)
-            dicvar={}
+            dicvar={"lolcn":["pedophile", "lolicon"]}
             #lolicon is pedophilia and if you think otherwise or think it's okay to be attracted to cartoon children then kill yourself
         elif action=="add":
+            #make sure toadd is a list
             if type(toadd)!=list:
                 toadd=[toadd]
+            #load dicvar as langcode.json and then build dictionary with toadd as list of words, langcode and dicvar as initial dictionary variable
             with open(directory+langcode+".json",'r') as dictoaddto:
                 dicvar= json.load(dictoaddto)
         final=add_to_dic_class.generate_shortcut(toadd, langcode,dicvar)
