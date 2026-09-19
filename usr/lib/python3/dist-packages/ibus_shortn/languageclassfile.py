@@ -36,6 +36,10 @@
 #if you have caps or something it will only apply caps thing at the end. (ie appendables)
 #again. this is actually better. without this, dictionary size rises to astronomical levels (iirc russian dictionary size rises to 80mb instead of, now, 8mb) just make sure your new encoded latin set is injective (no collisions)
 #again, even if you wanted to remove it, python3 has problems reading large json files with accents. so it would literally not work. if the language doesn't need this (ie the language already only uses the basic latin alphabet) then just set the encode and decode function as x:x to not break anything, like english does
+
+
+
+
 class language:
     def __init__(self, originalalphabet, originalalphabetlowercasetouppercase, originalalphabetuppercasetolowercase, encodedvowel, punctuation, dictionaryname, wordseparator, encodelist, decodelist):
         #list of what the user types and it's recognized. 
@@ -96,6 +100,6 @@ class language:
             with open("/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"+langcode+".json", 'r') as a:
                 dic=json.load(a)
                 del a
-        except:
-            dic="dic not found"
+        except Exception as p:
+            return logwrite(p,e=1)
         return overarchinglanguage, dic, langcode

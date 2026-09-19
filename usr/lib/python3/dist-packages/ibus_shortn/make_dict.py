@@ -48,8 +48,7 @@ class add_to_dic_class:
     def __init__(self):
         True
     #wordlist is a [list] of words, langcode is the code (ie "en", "fr", etc) that is used for lang config stuff. addingto is if the dictionary already exists or start fresh. returns the dic
-    def generate_shortcut( wordlist,langcode, addingto={"lolcn":["pedophile", "lolicon"]}):
-        #lolicon is pedophilia and if you think otherwise or think it's okay to be attracted to cartoon children then kill yourself
+    def generate_shortcut( wordlist,langcode, addingto):
         overarchinglanguage=language.givelanguageanddic("shortn"+langcode)[0]
         dicvar=addingto
         for word in wordlist:
@@ -69,21 +68,24 @@ class add_to_dic_class:
         return dicvar
     #the function to actually do stuff. action=="build" makes you write from fresh. action=="add" makes you add on to a preexisting dictionary. toadd is the content to add to use to build. directory is by default the /usr/lib one. this is to allow it to add a word to a dictionary for a user. 
     def whattodo( action, toadd, langcode, directory="/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"):
-        #if we are building then take toadd, use langcode language config to make a [list] for the dictionary. final is that long variable
         if action=="build":
-            final=add_to_dic_class.generate_shortcut(toadd, langcode)
+            with open(directory+langcode+"-list.json",'r') as dictoaddto:
+                toadd= json.load(dictoaddto)
+            dicvar={}
+            #lolicon is pedophilia and if you think otherwise or think it's okay to be attracted to cartoon children then kill yourself
         elif action=="add":
-            #make sure toadd is a list. a single word to add is fine
             if type(toadd)!=list:
                 toadd=[toadd]
-            #find langcode.json, read it, make a dictionary variable by converting toadd into it by building it from the dictionary variable of langcode.json. then have final be that final variable
             with open(directory+langcode+".json",'r') as dictoaddto:
-                final=add_to_dic_class.generate_shortcut(toadd, langcode, json.load(dictoaddto))
+                dicvar= json.load(dictoaddto)
+        final=add_to_dic_class.generate_shortcut(toadd, langcode,dicvar)
         #to add a word to dictionary we need root access since the dictionary for the user is in /usr/lib which is root protected for modifications
         #therefore we use python to create the .json file in temp and invoke pkexec to move it 
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp:
             json.dump(final, temp)
             temp_path = temp.name
-        # Use pkexec to move file with root privileges to directory/langcode.json 
-        subprocess.run(['pkexec', 'mv', temp_path, f"{directory}{langcode}.json"], check=True)
+        # Use pkexec to move file with root privileges to directory/langcode.json  and give it read rights for anyone 
+        subprocess.run(['pkexec', 'sh', '-c',f'mv {shlex.quote(temp_path)} {shlex.quote(f"{directory}{langcode}.json")} 'f'&& chmod 644 {shlex.quote(f"{directory}{langcode}.json")}'],check=True)
         return True
+    
+#add_to_dic_class.whattodo("build", 1, "fr", directory="/home/bastien/Desktop/the shortn projct/ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn/languagelist/")
