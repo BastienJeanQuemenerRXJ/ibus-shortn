@@ -68,6 +68,9 @@ class add_to_dic_class:
                     dicvar[ret]+=[word]
                 except:
                     dicvar[ret]=[word]
+        
+        for i in dicvar:
+            dicvar[i]=sorted(dicvar[i], key=lambda x: len([i for i in x if i in overarchinglanguage.encodedvowel]))
         return dicvar
     #the function to actually do stuff. action=="build" makes you write from fresh. action=="add" makes you add on to a preexisting dictionary. toadd is only used if "add". and it's a plain list of words.. directory is by default the /usr/lib one. this is to allow it to add a word to a dictionary for a user. 
     def whattodo( action, toadd, langcode, directory="/usr/lib/python3/dist-packages/ibus_shortn/languagelist/"):
@@ -95,4 +98,4 @@ class add_to_dic_class:
         subprocess.run(['pkexec', 'sh', '-c',f'mv {shlex.quote(temp_path)} {shlex.quote(f"{directory}{langcode}.json")} 'f'&& chmod 644 {shlex.quote(f"{directory}{langcode}.json")}'],check=True)
         return True
 #TO build a dictionary:
-#add_to_dic_class.whattodo("build", 1, "fr", directory="/home/bastien/Desktop/the shortn projct/ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn/languagelist/")
+#add_to_dic_class.whattodo("build", 1, "en", directory="/home/bastien/Desktop/the shortn projct/ibus-shortn/usr/lib/python3/dist-packages/ibus_shortn/languagelist/")
